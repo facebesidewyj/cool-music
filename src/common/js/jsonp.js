@@ -3,10 +3,11 @@ import OriginalJSONP from 'jsonp';
 export default function jsonp(url, data, option) {
   // 判断传入的url是否存在？
   url += (url.indexOf('?') < 0 ? '?' : '&') + param(data);
+
   return new Promise((resolve, reject) => {
     OriginalJSONP(url, option, (err, data) => {
       // 成功
-      if (err !== null) {
+      if (!err) {
         resolve(data);
       } else {
         reject(err);
@@ -22,6 +23,8 @@ export default function jsonp(url, data, option) {
  */
 function param(data) {
   let url = '';
+
+  // 遍历data对象
   for (var k in data) {
     let value = data[k] !== undefined ? data[k] : '';
     url += `&${k}=${encodeURIComponent(value)}`;
