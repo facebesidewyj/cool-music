@@ -19,7 +19,7 @@
 import Slider from 'base/slider/slider';
 import {
   getRecommend,
-  getDicsList
+  getDiscList
 } from 'api/recommend';
 import {
   ERR_OK
@@ -29,11 +29,13 @@ export default {
   props: [],
   data() {
     return {
-      recommends: []
+      recommends: [],
+      discList: []
     };
   },
   created() {
     this._getRecommendData();
+    this._getDiscList();
   },
   methods: {
     /**
@@ -46,13 +48,14 @@ export default {
         }
       });
     },
+
     /**
      * 获取歌单
      */
-    _getDicsList() {
-      getDicsList().then((res) => {
+    _getDiscList() {
+      getDiscList().then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res.data);
+          this.discList = res.data;
         }
       });
     }
