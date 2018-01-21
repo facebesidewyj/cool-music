@@ -11,6 +11,17 @@
     </div>
     <div class="recommend-list">
       <h1 class="title">热门歌单推荐</h1>
+      <ul>
+        <li class="recommend-list-item" v-for="item in discList" :key="item.id">
+          <div class="icon">
+            <img width="60" height="60" :src="item.imgurl" alt="歌单图片">
+          </div>
+          <div class="text">
+            <h2 class="item-title" v-html="item.creator.name"></h2>
+            <p class="desc" v-html="item.dissname"></p>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -48,14 +59,13 @@ export default {
         }
       });
     },
-
     /**
      * 获取歌单
      */
     _getDiscList() {
       getDiscList().then((res) => {
         if (res.code === ERR_OK) {
-          this.discList = res.data;
+          this.discList = res.data.list;
         }
       });
     }
@@ -87,6 +97,33 @@ export default {
       text-align: center;
       font-size: @font-size-medium;
       color: @color-theme;
+    }
+    .recommend-list-item {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0 20px 20px 20px;
+      .icon {
+        flex: 0 0 60px;
+        width: 60px;
+        padding-right: 20px;
+      }
+      .text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+        overflow: hidden;
+        line-height: 20px;
+        font-size: @font-size-medium;
+        .item-title {
+          margin-bottom: 10px;
+          color: @color-text;
+        }
+        .desc {
+          color: @color-text-l;
+        }
+      }
     }
   }
 }
