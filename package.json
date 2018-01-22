@@ -5,7 +5,8 @@
   "author": "facebesidewyj <wang.yijin@foxmail.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev":
+      "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js"
@@ -17,7 +18,8 @@
     "fastclick": "^1.0.6",
     "jsonp": "^0.2.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-lazyload": "^1.1.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -73,9 +75,5 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
 }

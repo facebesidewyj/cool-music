@@ -16,7 +16,7 @@
         <ul>
           <li class="recommend-list-item" v-for="item in discList" :key="item.id">
             <div class="icon">
-              <img width="60" height="60" :src="item.imgurl" alt="歌单图片">
+              <img width="60" height="60" v-lazy="item.imgurl" alt="歌单图片">
             </div>
             <div class="text">
               <h2 class="item-title" v-html="item.creator.name"></h2>
@@ -26,6 +26,9 @@
         </ul>
       </div>
     </div>
+    <div class="loading-wrapper" v-if="!discList.length">
+      <loading></loading>
+    </div>
   </scroll>
 </div>
 </template>
@@ -33,6 +36,7 @@
 <script type="text/ecmascript-6">
 import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
+import Loading from 'base/loading/loading';
 import { getRecommend, getDiscList } from 'api/recommend';
 import { ERR_OK } from 'api/config';
 
@@ -85,7 +89,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 };
 </script>
@@ -141,6 +146,12 @@ export default {
           }
         }
       }
+    }
+    .loading-wrapper {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }
