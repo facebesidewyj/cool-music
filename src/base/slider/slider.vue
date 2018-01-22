@@ -57,6 +57,7 @@ export default {
     };
   },
   mounted() {
+    // 延时20毫秒确保dom渲染
     setTimeout(() => {
       this._setWidth();
       this._initDots();
