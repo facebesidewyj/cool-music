@@ -15,11 +15,13 @@ export function getRecommend() {
     needNewCode: 1
   });
 
-  return axios.get(url, {
-    params: data
-  }).then((res) => {
-    return Promise.resolve(res.data);
-  });
+  return axios
+    .get(url, {
+      params: data
+    })
+    .then(res => {
+      return Promise.resolve(res.data);
+    });
 }
 
 /**
@@ -42,9 +44,11 @@ export function getDiscList() {
   });
 
   // axios通过浏览器发送ajax请求获取数据
-  return axios.get(url, {
-    params: data
-  }).then((res) => {
-    return Promise.resolve(res.data);
-  });
+  return axios
+    .get(url, {
+      params: data
+    })
+    .then(res => {
+      return Promise.resolve(res.data);
+    });
 }
