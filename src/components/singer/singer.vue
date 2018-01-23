@@ -1,11 +1,18 @@
 <template>
-  <div>歌手页面</div>
+  <div class="singer-wrapper">
+    <listview :data="singers"></listview>
+    <div class="loading-wrapper">
+      <loading v-if="!singers.length"></loading>
+    </div>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { getSingers } from 'api/singer';
 import { ERR_OK } from 'api/config';
 import Singer from 'common/js/singer';
+import Listview from 'base/listView/listView';
+import Loading from 'base/loading/loading';
 
 const HOT_NAME = '热门';
 const HOT_LIST_SIZE = 10;
@@ -67,13 +74,13 @@ export default {
 
       // 根据首字母进行排序和分组
       for (let i = 0; i < wordArray.length; i++) {
-        let model = {
+        let singerGroup = {
           title: wordArray[i],
           data: []
         };
         for (let j = 0; j < singerList.length; j++) {
           if (wordArray[i] === singerList[j].Findex) {
-            model.data.push(
+            singerGroup.data.push(
               new Singer({
                 id: singerList[j].Fsinger_mid,
                 name: singerList[j].Fsinger_name
@@ -81,14 +88,29 @@ export default {
             );
           }
         }
-        dataList.push(model);
+        dataList.push(singerGroup);
       }
       return hotList.concat(dataList);
     }
+  },
+  components: {
+    Listview,
+    Loading
   }
 };
 </script>
 
 <style type="text/css" lang="less" scoped>
-
+.singer-wrapper {
+  position: fixed;
+  top: 88px;
+  bottom: 0;
+  width: 100%;
+  .loading-wrapper {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+  }
+}
 </style>
