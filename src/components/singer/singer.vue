@@ -29,7 +29,6 @@ export default {
       getSingers().then(res => {
         if (res.code === ERR_OK) {
           this.singers = this._formatList(res.data.list);
-          console.log(this.singers);
         }
       });
     },
