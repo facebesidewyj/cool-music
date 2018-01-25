@@ -126,7 +126,6 @@ export default {
 
         // 显示字母提示
         this.tipFlag = true;
-        console.log(this.$refs.listGroup[index]);
         this.wordTip = this.$refs.wordIndexList[index].innerText;
 
         // 根据索引滚动到对应分组
