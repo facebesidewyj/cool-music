@@ -78,6 +78,19 @@ export default {
      */
     disable() {
       this.scroll && this.scroll.disable();
+    },
+
+    /**
+     * 代理scrollTo方法，滚动到指定位置
+     */
+    scrollTo() {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
+    },
+    /**
+     * 滚动到指定元素
+     */
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
     }
   },
   watch: {

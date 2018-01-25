@@ -75,7 +75,7 @@ export default {
       // 根据首字母进行排序和分组
       for (let i = 0; i < wordArray.length; i++) {
         let singerGroup = {
-          title: wordArray[i],
+          title: '',
           data: []
         };
         for (let j = 0; j < singerList.length; j++) {
@@ -88,7 +88,12 @@ export default {
             );
           }
         }
-        dataList.push(singerGroup);
+
+        // 如果数组中有数据，则添加分组字母
+        if (singerGroup.data.length) {
+          singerGroup.title = wordArray[i];
+          dataList.push(singerGroup);
+        }
       }
       return hotList.concat(dataList);
     }

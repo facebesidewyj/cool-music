@@ -3,7 +3,6 @@
  * @type {Object}
  */
 export const domUtil = {
-
   /**
    * 添加样式名
    * @param {Element} el        传入的元素
@@ -25,5 +24,20 @@ export const domUtil = {
   hasClass(el, className) {
     let reg = new RegExp('(^|\\s)' + className + '(\\s|$)');
     return reg.test(el.className);
+  },
+
+  /**
+   * 元素属性相关操作
+   * @param  {Element} el   要设置属性的元素
+   * @param  {String} name  属性名
+   * @param  {String} val   属性值
+   * @return {String}       属性值
+   */
+  attr(el, name, val) {
+    if (val) {
+      return el.setAttribute(name, val);
+    } else {
+      return el.getAttribute(name);
+    }
   }
 };
