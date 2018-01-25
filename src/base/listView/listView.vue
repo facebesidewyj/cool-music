@@ -1,5 +1,5 @@
 <template>
-<scroll class="listView-wrapper" :data="data" ref="scroll">
+<scroll class="listView-wrapper" :data="data" ref="scroll" :listenScroll="true" @scroll="scroll" :probeType="3">
   <ul>
     <li class="listView-group" v-for="(singerGroup, index) in data" :key="index" ref="listGroup">
       <h2 class="title">{{singerGroup.title}}</h2>
@@ -11,9 +11,9 @@
       </ul>
     </li>
   </ul>
-  <div class="word-index-wrapper" @touchstart="jumpToListGroup" @touchmove.stop.prevent="scrollToListGroup">
+  <div class="word-index-wrapper" @touchstart="scrollToListGroup" @touchmove.stop.prevent="touchMoveScroll">
     <ul>
-      <li v-for="(item, index) in wordIndexList" :key="index" class="word-index" :data-index="index">
+      <li v-for="(item, index) in wordIndexList" :key="index" class="word-index" :data-index="index" :class="{active:targetIndex === index}">
         {{item}}
       </li>
     </ul>
@@ -37,7 +37,10 @@ export default {
   },
   data() {
     return {
-      touchScroll: {}
+      touchScroll: {},
+      scrollY: -1,
+      targetIndex: 0,
+      heightList: []
     };
   },
   computed: {
@@ -52,54 +55,103 @@ export default {
   },
   methods: {
     /**
-     * 点击字母索引滚动到指定分组列表
+     * 点击字母索引，滚动到指定分组
      */
-    jumpToListGroup(event) {
-      // 获取点击元素的索引值
-      let index = parseInt(domUtil.attr(event.target, 'data-index'));
+    scrollToListGroup(event) {
+      // 获得索引
+      let index = domUtil.attr(event.target, 'data-index');
 
-      // 设置一个对象记录起始索引和开始位置
+      // 记录起始索引和起始位置
       this.touchScroll.startIndex = index;
       this.touchScroll.startPageY = event.touches[0].pageY;
 
-      // 滚动到目标元素
       this._scrollToElement(index);
     },
 
     /**
-     * 分组列表跟随字母索引滑动
+     * 手指在索引上滑动，滚动到对应分组
      */
-    scrollToListGroup(event) {
-      // 获取Y轴滚动的起始位置和结束位置
-      let endPageY = event.touches[0].pageY;
+    touchMoveScroll(event) {
+      // 获得滑动距离
       let startPageY = this.touchScroll.startPageY;
+      let endPageY = event.touches[0].pageY;
+      let distance = endPageY - startPageY;
 
-      // 计算滚动了几个索引值
-      let scrollIndex = Math.ceil((endPageY - startPageY) / WORD_INDEX_LENGTH);
+      // 根据距离获得目标索引（起始索引+滚动索引）
+      let startIndex = this.touchScroll.startIndex;
+      let scrollIndex = Math.ceil(distance / WORD_INDEX_LENGTH);
+      let targetIndex = parseInt(startIndex) + scrollIndex;
 
-      // 计算结束索引（起始索引+滚动索引）
-      let endIndex = this.touchScroll.startIndex + scrollIndex;
-
-      // 滚动到目标元素
-      this._scrollToElement(endIndex);
+      // 根据索引滚动到对应分组
+      this._scrollToElement(targetIndex);
     },
 
     /**
-     * 私有方法，滚到到目标元素
+     * 监听scroll组件中的scroll事件
+     * @param  {Object} pos 滚动位置坐标
+     */
+    scroll(pos) {
+      this.scrollY = -pos.y;
+    },
+
+    /**
+     * 私有函数，根据索引跳转到对应分组
+     * @param  {Number} index 索引
      */
     _scrollToElement(index) {
-      if (!index) {
-        return;
+      if (index) {
+        // 索引边界判断
+        if (index < 0) {
+          index = 0;
+        } else if (index > this.wordIndexList.length - 1) {
+          index = this.wordIndexList.length - 1;
+        }
+        this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
+      }
+    },
+    /**
+     * 私有函数，计算分组数据的高度
+     */
+    _computeHeight() {
+      let listGroup = this.$refs.listGroup;
+      let height = 0;
+
+      // 构造高度区间
+      this.heightList.push(height);
+      for (let i = 0; i < listGroup.length; i++) {
+        let item = listGroup[i];
+        height += item.clientHeight;
+        this.heightList.push(height);
+      }
+    }
+  },
+  watch: {
+    /**
+     * 监听data变化，计算高度
+     */
+    data() {
+      setTimeout(() => {
+        this._computeHeight();
+      }, 20);
+    },
+    scrollY(newScrollY) {
+      // 滚动到顶部
+      if (newScrollY < 0) {
+        this.targetIndex = 0;
       }
 
-      // 边界判断
-      if (index < 0) {
-        index = 0;
-      } else if (index > this.wordIndexList.length - 1) {
-        index = this.wordIndexList.length - 1;
+      // 在中间滚动
+      for (let i = 0; i < this.heightList.length - 1; i++) {
+        let startHeight = this.heightList[i];
+        let endHeight = this.heightList[i + 1];
+        if (newScrollY >= startHeight && newScrollY <= endHeight) {
+          this.targetIndex = i;
+          return;
+        }
       }
 
-      this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
+      // 滚动到底部
+      this.targetIndex = this.heightList.length - 2;
     }
   },
   components: {

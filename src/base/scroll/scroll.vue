@@ -35,6 +35,15 @@ export default {
     data: {
       type: Array,
       default: null
+    },
+
+    /**
+     * 是否开启监听滚动
+     * @type {Object}
+     */
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -54,6 +63,13 @@ export default {
           probeType: this.probeType,
           click: this.click
         });
+
+        if (this.listenScroll) {
+          let _this = this;
+          this.scroll.on('scroll', pos => {
+            _this.$emit('scroll', pos);
+          });
+        }
       }
     },
 
