@@ -11,12 +11,15 @@
       </ul>
     </li>
   </ul>
-  <div class="word-index-wrapper" @touchstart="scrollToListGroup" @touchmove.stop.prevent="touchMoveScroll">
+  <div class="word-index-wrapper" @touchstart="scrollToListGroup" @touchmove.stop.prevent="touchMoveScroll" @touchend="touchEnd">
     <ul>
-      <li v-for="(item, index) in wordIndexList" :key="index" class="word-index" :data-index="index" :class="{active:targetIndex === index}">
+      <li ref="wordIndexList" v-for="(item, index) in wordIndexList" :key="index" class="word-index" :data-index="index" :class="{active:targetIndex === index}">
         {{item}}
       </li>
     </ul>
+  </div>
+  <div class="word-tip" v-if="tipFlag">
+    <span class="text">{{wordTip}}</span>
   </div>
 </scroll>
 </template>
@@ -37,10 +40,18 @@ export default {
   },
   data() {
     return {
+      // 滚动对象，记录位置和索引
       touchScroll: {},
+      // Y轴滚动距离
       scrollY: -1,
+      // 索引
       targetIndex: 0,
-      heightList: []
+      // 高度区间列表
+      heightList: [],
+      // 字母提示
+      tipFlag: false,
+      // 字母提示文字
+      wordTip: ''
     };
   },
   computed: {
@@ -82,8 +93,14 @@ export default {
       let scrollIndex = Math.ceil(distance / WORD_INDEX_LENGTH);
       let targetIndex = parseInt(startIndex) + scrollIndex;
 
-      // 根据索引滚动到对应分组
       this._scrollToElement(targetIndex);
+    },
+
+    /**
+     * 结束触摸,关闭提示
+     */
+    touchEnd() {
+      this.tipFlag = false;
     },
 
     /**
@@ -106,6 +123,13 @@ export default {
         } else if (index > this.wordIndexList.length - 1) {
           index = this.wordIndexList.length - 1;
         }
+
+        // 显示字母提示
+        this.tipFlag = true;
+        console.log(this.$refs.listGroup[index]);
+        this.wordTip = this.$refs.wordIndexList[index].innerText;
+
+        // 根据索引滚动到对应分组
         this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
       }
     },
@@ -113,13 +137,13 @@ export default {
      * 私有函数，计算分组数据的高度
      */
     _computeHeight() {
-      let listGroup = this.$refs.listGroup;
       let height = 0;
+      let groupList = this.$refs.listGroup;
 
-      // 构造高度区间
+      // 计算分组高度区间
       this.heightList.push(height);
-      for (let i = 0; i < listGroup.length; i++) {
-        let item = listGroup[i];
+      for (let i = 0; i < groupList.length; i++) {
+        let item = groupList[i];
         height += item.clientHeight;
         this.heightList.push(height);
       }
@@ -138,20 +162,20 @@ export default {
       // 滚动到顶部
       if (newScrollY < 0) {
         this.targetIndex = 0;
-      }
+      } else if (newScrollY > this.heightList[this.heightList.length - 1]) {
+        // 滚动到底部
+        this.targetIndex = this.heightList.length - 1;
+      } else {
+        // 在中间滚动
+        for (let i = 0; i < this.heightList.length - 1; i++) {
+          let minHeight = this.heightList[i];
+          let maxHeight = this.heightList[i + 1];
 
-      // 在中间滚动
-      for (let i = 0; i < this.heightList.length - 1; i++) {
-        let startHeight = this.heightList[i];
-        let endHeight = this.heightList[i + 1];
-        if (newScrollY >= startHeight && newScrollY <= endHeight) {
-          this.targetIndex = i;
-          return;
+          if (newScrollY >= minHeight && newScrollY <= maxHeight) {
+            this.targetIndex = i;
+          }
         }
       }
-
-      // 滚动到底部
-      this.targetIndex = this.heightList.length - 2;
     }
   },
   components: {
@@ -216,6 +240,24 @@ export default {
       &.active {
         color: @color-theme;
       }
+    }
+  }
+  .word-tip {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    .text {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      border-radius: 50%;
+      background-color: @color-dialog-background;
+      opacity: 0.8;
+      color: @color-theme;
+      font-size: @font-size-large;
     }
   }
 }
