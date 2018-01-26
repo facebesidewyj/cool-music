@@ -21,6 +21,9 @@
   <div class="word-tip" v-if="tipFlag">
     <span class="text">{{wordTip}}</span>
   </div>
+  <div class="fixed-title-wrapper" v-if="fixedTitle" ref="fixedTitle">
+    <h2 class="fixed-title">{{fixedTitle}}</h2>
+  </div>
 </scroll>
 </template>
 
@@ -29,6 +32,7 @@ import Scroll from 'base/scroll/scroll';
 import { domUtil } from 'common/js/domUtil';
 
 const WORD_INDEX_LENGTH = 18;
+const TITLE_HEIGHT = 30;
 
 export default {
   name: 'listView',
@@ -51,7 +55,11 @@ export default {
       // 字母提示
       tipFlag: false,
       // 字母提示文字
-      wordTip: ''
+      wordTip: '',
+      // 分组列表title距离fixedTitle的数值
+      distanceToTitle: 0,
+      // 分组列表title移动到fixedTitle的距离
+      moveDistance: 0
     };
   },
   computed: {
@@ -62,6 +70,18 @@ export default {
       return this.data.map((item, index) => {
         return item.title.slice(0, 1);
       });
+    },
+    /**
+     * 固定在顶部显示的标题
+     */
+    fixedTitle() {
+      if (this.data[this.targetIndex]) {
+        // 边界判断
+        if (this.scrollY > 0) {
+          return this.data[this.targetIndex].title;
+        }
+      }
+      return '';
     }
   },
   methods: {
@@ -172,8 +192,25 @@ export default {
 
           if (newScrollY >= minHeight && newScrollY <= maxHeight) {
             this.targetIndex = i;
+
+            // 计算分组列表title和fixedTitle的距离
+            this.distanceToTitle = maxHeight - newScrollY;
           }
         }
+      }
+    },
+    distanceToTitle(newDistance) {
+      let moveDistance = 0;
+      if (newDistance > 0 && newDistance < TITLE_HEIGHT) {
+        // 获得一个负的向上偏移量
+        moveDistance = newDistance - TITLE_HEIGHT;
+      } else {
+        moveDistance = 0;
+      }
+
+      if (moveDistance !== this.moveDistance) {
+        this.moveDistance = moveDistance;
+        this.$refs.fixedTitle.style.transform = `translate3D(0, ${this.moveDistance}px, 0)`;
       }
     }
   },
@@ -252,11 +289,25 @@ export default {
       width: 50px;
       height: 50px;
       line-height: 50px;
+      padding-right: 4px;
       border-radius: 50%;
       background-color: @color-dialog-background;
       opacity: 0.8;
       color: @color-theme;
       font-size: @font-size-large;
+    }
+  }
+  .fixed-title-wrapper {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    .fixed-title {
+      height: 30px;
+      line-height: 30px;
+      padding-left: 20px;
+      font-size: @font-size-small;
+      color: @color-text-l;
+      background-color: @color-highlight-background;
     }
   }
 }
