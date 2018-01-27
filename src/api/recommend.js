@@ -1,10 +1,10 @@
+/**
+ * 获取推荐页数据
+ */
 // import jsonp from 'common/js/jsonp';
 import { commonParams } from './config';
 import axios from 'axios';
 
-/**
- * 获取轮播图数据
- */
 export function getRecommend() {
   const url = '/api/getRecommend';
 
@@ -15,13 +15,9 @@ export function getRecommend() {
     needNewCode: 1
   });
 
-  return axios
-    .get(url, {
-      params: data
-    })
-    .then(res => {
-      return Promise.resolve(res.data);
-    });
+  return axios.get(url, { params: data }).then(res => {
+    return Promise.resolve(res.data);
+  });
 }
 
 /**
@@ -44,11 +40,7 @@ export function getDiscList() {
   });
 
   // axios通过浏览器发送ajax请求获取数据
-  return axios
-    .get(url, {
-      params: data
-    })
-    .then(res => {
-      return Promise.resolve(res.data);
-    });
+  return axios.get(url, { params: data }).then(res => {
+    return Promise.resolve(res.data);
+  });
 }

@@ -57,9 +57,25 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         });
       });
 
-      // 获得歌手数据
+      // 获得歌手列表数据
       app.get('/api/getSingers', function(req, res) {
         const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg';
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data);
+        }).catch((e) => {
+          console.log(e);
+        });
+      });
+
+      // 获得歌手详情
+      app.get('/api/getSingerDetail', function(req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg';
         axios.get(url, {
           headers: {
             referer: 'https://c.y.qq.com/',

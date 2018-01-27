@@ -1,10 +1,10 @@
 <template>
-<scroll class="listView-wrapper" :data="data" ref="scroll" :listenScroll="true" @scroll="scroll" :probeType="3">
+<scroll class="listView-wrapper" :data="data" ref="scroll" :listenScroll="true" @scroll="scroll" :probeType="3" :click="true">
   <ul>
     <li class="listView-group" v-for="(singerGroup, index) in data" :key="index" ref="listGroup">
       <h2 class="title">{{singerGroup.title}}</h2>
       <ul>
-        <li class="listView-item" v-for="(singer, index) in singerGroup.data" :key="index">
+        <li class="listView-item" v-for="(singer, index) in singerGroup.data" :key="index" @click="selectSinger(singer)">
           <img v-lazy="singer.avatar" alt="userImage">
           <span class="name">{{singer.name}}</span>
         </li>
@@ -13,7 +13,7 @@
   </ul>
   <div class="word-index-wrapper" @touchstart="scrollToListGroup" @touchmove.stop.prevent="touchMoveScroll" @touchend="touchEnd">
     <ul>
-      <li ref="wordIndexList" v-for="(item, index) in wordIndexList" :key="index" class="word-index" :data-index="index" :class="{active:targetIndex === index}">
+      <li ref="wordIndexList" v-for="(item, index) in wordIndexList" :key="index" class="word-index" :data-index="index" :class="{'active':targetIndex === index}">
         {{item}}
       </li>
     </ul>
@@ -90,7 +90,7 @@ export default {
      */
     scrollToListGroup(event) {
       // 获得索引
-      let index = domUtil.attr(event.target, 'data-index');
+      let index = parseInt(domUtil.attr(event.target, 'data-index'));
 
       // 记录起始索引和起始位置
       this.touchScroll.startIndex = index;
@@ -111,7 +111,7 @@ export default {
       // 根据距离获得目标索引（起始索引+滚动索引）
       let startIndex = this.touchScroll.startIndex;
       let scrollIndex = Math.ceil(distance / WORD_INDEX_LENGTH);
-      let targetIndex = parseInt(startIndex) + scrollIndex;
+      let targetIndex = startIndex + scrollIndex;
 
       this._scrollToElement(targetIndex);
     },
@@ -132,6 +132,14 @@ export default {
     },
 
     /**
+     * 派发点击事件
+     * @param  {Object} item singer对象
+     */
+    selectSinger(item) {
+      this.$emit('selectSinger', item);
+    },
+
+    /**
      * 私有函数，根据索引跳转到对应分组
      * @param  {Number} index 索引
      */
@@ -148,8 +156,9 @@ export default {
         this.tipFlag = true;
         this.wordTip = this.$refs.wordIndexList[index].innerText;
 
-        // 根据索引滚动到对应分组
+        // 根据索引滚动到对应分组并更新索引
         this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
+        this.targetIndex = index;
       }
     },
     /**
