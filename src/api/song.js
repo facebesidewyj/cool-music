@@ -14,6 +14,7 @@ import { createSong } from 'common/js/song';
 export function formatSongs(songs) {
   let res = [];
   songs.forEach(song => {
+    // 解构赋值
     let { musicData } = song;
     if (musicData.songid && musicData.albumid) {
       res.push(createSong(musicData));
