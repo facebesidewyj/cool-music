@@ -5,12 +5,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { getSingerDetail } from 'api/singer';
-import { formatSongs } from 'api/song';
-import { ERR_OK } from 'api/config';
-
-// vuex提供的语法糖
+// vuex提供计算属性的语法糖
 import { mapGetters } from 'vuex';
+import { ERR_OK } from 'api/config';
+import { getSingerSongs, formatSongs } from 'api/song';
 
 export default {
   name: 'singer-detail',
@@ -21,24 +19,22 @@ export default {
     };
   },
   computed: {
-    /**
-     * vuex提供的取数据的语法糖，映射getters里的方法
-     * @type {String}
-     */
     ...mapGetters(['singer'])
   },
   created() {
-    this._getSingerDetail();
+    this._getSingerSongs();
   },
   methods: {
-    _getSingerDetail() {
-      // vuex中没有对象直接返回歌手界面
+    /**
+     * 获得与歌手对应的歌曲列表
+     */
+    _getSingerSongs() {
       if (!this.singer.id) {
         this.$router.push('/singer');
         return;
       }
 
-      getSingerDetail(this.singer.id).then(res => {
+      getSingerSongs(this.singer.id).then(res => {
         if (res.code === ERR_OK) {
           this.songs = formatSongs(res.data.list);
         }

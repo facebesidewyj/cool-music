@@ -30,8 +30,8 @@ export default {
   },
   methods: {
     /**
-     * 跳转到歌手详情页
-     * @param  {Object} item singer对象
+     * 触发点击事件，进入歌手详情页
+     * @param  {Object} singer 传入的singer对象
      */
     selectSinger(singer) {
       this.$router.push({

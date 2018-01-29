@@ -133,10 +133,10 @@ export default {
 
     /**
      * 派发点击事件
-     * @param  {Object} item singer对象
+     * @param  {Object} singer 传入歌手对象
      */
-    selectSinger(item) {
-      this.$emit('selectSinger', item);
+    selectSinger(singer) {
+      this.$emit('selectSinger', singer);
     },
 
     /**

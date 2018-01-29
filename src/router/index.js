@@ -27,7 +27,7 @@ export default new Router({
       component: Singer,
       children: [
         {
-          path: ':id', // 以id为变量
+          path: ':id', // :属性指可以传入属性来当做路径
           component: SingerDetail
         }
       ]

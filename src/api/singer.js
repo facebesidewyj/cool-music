@@ -5,6 +5,10 @@ import { commonParams } from './config';
 import axios from 'axios';
 import Singer from 'common/js/singer';
 
+// 声明格式化数据需要用到的常量
+const HOT_NAME = '热门';
+const HOT_LIST_SIZE = 10;
+
 /**
  * 用于获取歌手列表的接口
  * @return {Object} 返回Promise
@@ -26,32 +30,6 @@ export function getSingers() {
     return Promise.resolve(res.data);
   });
 }
-
-/**
- * 用于获取歌手详情的接口
- * @return {Object} 返回Promise
- */
-export function getSingerDetail(singerId) {
-  const url = '/api/getSingerDetail';
-  const data = Object.assign(commonParams, {
-    hostUin: 0,
-    needNewCode: 0,
-    platform: 'yqq',
-    order: 'listen',
-    begin: 0,
-    num: 80,
-    songstatus: 1,
-    singermid: singerId
-  });
-
-  return axios.get(url, { params: data }).then(res => {
-    return Promise.resolve(res.data);
-  });
-}
-
-// 声明格式化数据需要用到的常量
-const HOT_NAME = '热门';
-const HOT_LIST_SIZE = 10;
 
 /**
  * 格式化传入的数据，将数据转成通讯录需要的

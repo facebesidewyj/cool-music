@@ -73,8 +73,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         });
       });
 
-      // 获得歌手详情
-      app.get('/api/getSingerDetail', function(req, res) {
+      // 获得歌手对应的歌曲列表
+      app.get('/api/getSingerSongs', function(req, res) {
         const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg';
         axios.get(url, {
           headers: {
