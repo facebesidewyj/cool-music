@@ -5,6 +5,12 @@
     </div>
     <h1 class="title" v-html="singerName"></h1>
     <div class="background-image" :style="backgroundImage" ref="bgImage">
+      <div class="play-btn-wrapper" v-show="songs.length" ref="playBtn">
+        <div class="play-btn">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <!-- 遮罩层 -->
       <div class="image-filter" ref="filter"></div>
     </div>
@@ -79,7 +85,6 @@ export default {
 
     // $el:根据Vue组件获取原生对象，设置滚动列表显示位置
     domUtil.setCss(this.$refs.scrollList.$el, 'top', `${this.imageHeight}px`);
-    // this.$refs.scrollList.$el.style.top = `${this.imageHeight}px`;
 
     // 设置背景图最大滚动距离(露出歌手名)
     this.maxImageScroll = this.imageHeight - TITLE_HEIGTH;
@@ -108,7 +113,6 @@ export default {
       // 列表上滑时遮住图片
       let translateY = Math.min(newY, this.maxImageScroll);
       domUtil.setCss(this.$refs.layer, 'transform', `translate3d(0, -${translateY}px, 0)`);
-      // this.$refs.layer.style['transform'] = `translate3d(0, -${translateY}px, 0)`;
 
       let zIndex = 0;
       let blur = 0;
@@ -127,24 +131,19 @@ export default {
 
       domUtil.setCss(bgImageDom, 'transform', `scale(${scale})`);
       domUtil.setCss(this.$refs.filter, 'backdrop', `blur(${blur}px)`);
-      // bgImageDom.style['transform'] = `scale(${scale})`;
-      // this.$refs.filter.style['backdrop'] = `blur(${blur}px)`;
 
       // 列表上滑到最大距离，露出歌手名，修改背景图高度和z-index
       if (newY > this.maxImageScroll) {
         domUtil.setCss(bgImageDom, 'height', `${TITLE_HEIGTH}px`);
         domUtil.setCss(bgImageDom, 'paddingTop', 0);
-        // bgImageDom.style.height = `${TITLE_HEIGTH}px`;
-        // bgImageDom.style.paddingTop = 0;
+        domUtil.setCss(this.$refs.playBtn, 'display', 'none');
         zIndex = 10;
       } else {
         domUtil.setCss(bgImageDom, 'height', 0);
         domUtil.setCss(bgImageDom, 'paddingTop', '70%');
-        // bgImageDom.style.height = 0;
-        // bgImageDom.style.paddingTop = '70%';
+        domUtil.setCss(this.$refs.playBtn, 'display', '');
       }
       domUtil.setCss(bgImageDom, 'zIndex', zIndex);
-      // bgImageDom.style['zIndex'] = zIndex;
     }
   },
   components: {
@@ -198,6 +197,34 @@ export default {
     // 定义Y轴起始位置
     transform-origin: top;
     background-size: cover;
+    .play-btn-wrapper {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      z-index: 50;
+      .play-btn {
+        width: 135px;
+        box-sizing: border-box;
+        padding: 7px 0;
+        margin: 0 auto;
+        text-align: center;
+        border: 1px solid @color-theme;
+        border-radius: 100px;
+        color: @color-theme;
+        font-size: 0;
+        .icon-play {
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 6px;
+          font-size: @font-size-medium-x;
+        }
+        .text {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: @font-size-small;
+        }
+      }
+    }
     .image-filter {
       position: absolute;
       top: 0;

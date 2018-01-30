@@ -60,7 +60,7 @@ export const domUtil = {
 
     let keyName = '';
     for (let key in transformNames) {
-      if (elementStyle[transformNames[key]] !== undefined) {
+      if (typeof elementStyle[transformNames[key]] !== 'undefined') {
         keyName = key;
       }
     }
@@ -70,7 +70,7 @@ export const domUtil = {
         name = keyName + name.charAt(0).toUpperCase() + name.substr(1);
       }
     }
-    console.log(name);
+
     el.style[name] = val;
   }
 };
