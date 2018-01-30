@@ -1,6 +1,6 @@
 <template>
 <transition  name="show">
-  <div class="singer-detail-wrapper">歌手详情页</div>
+  <music-list :singerName="singerName" :bgImage="bgImage" :songs="songs"></music-list>
 </transition>
 </template>
 
@@ -9,6 +9,7 @@
 import { mapGetters } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { getSingerSongs, formatSongs } from 'api/song';
+import MusicList from 'components/music-list/music-list';
 
 export default {
   name: 'singer-detail',
@@ -19,6 +20,12 @@ export default {
     };
   },
   computed: {
+    singerName() {
+      return this.singer.name;
+    },
+    bgImage() {
+      return this.singer.avatar;
+    },
     ...mapGetters(['singer'])
   },
   created() {
@@ -40,12 +47,14 @@ export default {
         }
       });
     }
+  },
+  components: {
+    MusicList
   }
 };
 </script>
 
 <style type="text/css" lang="less" scoped>
-@import '../../common/less/variable.less';
 // 定义过渡动画
 .show-enter-active,
 .show-leave-active {
@@ -54,15 +63,5 @@ export default {
 .show-enter,
 .show-leave-to {
   transform: translate3d(100%, 0, 0);
-}
-
-.singer-detail-wrapper {
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: @color-background;
 }
 </style>

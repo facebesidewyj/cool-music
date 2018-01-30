@@ -39,5 +39,38 @@ export const domUtil = {
     } else {
       return el.getAttribute(name);
     }
+  },
+
+  /**
+   * 元素样式操作
+   * @param  {Element} el   要设置样式的元素
+   * @param  {String} name  样式名
+   * @param  {String} val   样式值
+   */
+  setCss(el, name, val) {
+    let elementStyle = document.createElement('div').style;
+
+    let transformNames = {
+      webkit: 'webkitTransform',
+      Moz: 'MozTransform',
+      O: 'OTransform',
+      ms: 'msTransform',
+      standard: 'transform'
+    };
+
+    let keyName = '';
+    for (let key in transformNames) {
+      if (elementStyle[transformNames[key]] !== undefined) {
+        keyName = key;
+      }
+    }
+
+    if (keyName) {
+      if (keyName !== 'standard') {
+        name = keyName + name.charAt(0).toUpperCase() + name.substr(1);
+      }
+    }
+    console.log(name);
+    el.style[name] = val;
   }
 };
