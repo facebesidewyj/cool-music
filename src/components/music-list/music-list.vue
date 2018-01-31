@@ -16,9 +16,9 @@
     </div>
     <!-- 上滑时遮住图片 -->
     <div class="image-layer" ref="layer"></div>
-    <scroll :data="songs" :listenScroll="true" :probeType="3" @scroll="scroll" class="scroll-list" ref="scrollList">
+    <scroll :data="songs" :listenScroll="true" :probeType="3" :click="true" @scroll="scroll" class="scroll-list" ref="scrollList">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @selectSong="selectSong"></song-list>
       </div>
       <div class="loading-wrapper" v-if="!songs.length">
         <loading></loading>
@@ -32,10 +32,12 @@ import SongList from 'base/song-list/song-list';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import { domUtil } from 'common/js/domUtil';
+import { mapActions } from 'vuex';
 
 const TITLE_HEIGTH = 40;
 
 export default {
+  name: 'music-list',
   props: {
     /**
      * 歌手名
@@ -103,7 +105,23 @@ export default {
      */
     scroll(pos) {
       this.scrollY = -pos.y;
-    }
+    },
+
+    /**
+     * 歌曲点击事件
+     * @param  {Object} song  歌曲对象
+     * @param  {Number} index 歌曲索引
+     */
+    selectSong(song, index) {
+      console.log(song.name);
+      console.log(index);
+      this.selectPlay({
+        list: this.songs,
+        index: index
+      });
+    },
+
+    ...mapActions(['selectPlay'])
   },
   watch: {
     scrollY(newY) {

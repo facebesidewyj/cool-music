@@ -1,7 +1,7 @@
 <template lang="html">
 <div class="song-list">
   <ul>
-    <li class="song-item" v-for="song in songs" :key="song.id">
+    <li class="song-item" v-for="(song,index) in songs" :key="song.id" @click="selectSong(song, index)">
       <div class="song-content">
         <h1 class="title">{{song.name}}</h1>
         <p class="desc">{{getSongDesc(song)}}</p>
@@ -13,6 +13,7 @@
 
 <script type="text/ecmascript-6">
 export default {
+  name: 'song-list',
   props: {
     songs: {
       type: Array,
@@ -20,8 +21,21 @@ export default {
     }
   },
   methods: {
+    /**
+     * 获取歌曲描述
+     * @param  {Object} song 歌曲对象
+     */
     getSongDesc(song) {
       return `${song.name}-${song.album}`;
+    },
+
+    /**
+     * 派发点击事件
+     * @param  {Object} song  歌曲对象
+     * @param  {Number} index 歌曲索引
+     */
+    selectSong(song, index) {
+      this.$emit('selectSong', song, index);
     }
   }
 };
