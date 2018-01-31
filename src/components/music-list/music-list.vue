@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="music-list-wrapper">
-    <div class="icon-back-wrapper" @click="back">
-      <i class="icon-back"></i>
+    <div class="title-wrapper">
+      <i class="icon-back" @click="back"></i>
+      <h1 class="title" v-html="singerName"></h1>
     </div>
-    <h1 class="title" v-html="singerName"></h1>
     <div class="background-image" :style="backgroundImage" ref="bgImage">
       <div class="play-btn-wrapper" v-show="songs.length" ref="playBtn">
         <div class="play-btn">
@@ -34,7 +34,8 @@ import Loading from 'base/loading/loading';
 import { domUtil } from 'common/js/domUtil';
 import { mapActions } from 'vuex';
 
-const TITLE_HEIGTH = 40;
+const TITLE_HEIGHT = 40;
+const IMAGE_HEIGHT = 262;
 
 export default {
   name: 'music-list',
@@ -70,8 +71,6 @@ export default {
     return {
       // Y轴滚动距离
       scrollY: 0,
-      // 背景图高度
-      imageHeight: 0,
       // 图片最大滚动距离
       maxImageScroll: 0
     };
@@ -82,14 +81,8 @@ export default {
     }
   },
   mounted() {
-    // 获取背景图高度
-    this.imageHeight = this.$refs.bgImage.clientHeight;
-
-    // $el:根据Vue组件获取原生对象，设置滚动列表显示位置
-    domUtil.setCss(this.$refs.scrollList.$el, 'top', `${this.imageHeight}px`);
-
     // 设置背景图最大滚动距离(露出歌手名)
-    this.maxImageScroll = this.imageHeight - TITLE_HEIGTH;
+    this.maxImageScroll = IMAGE_HEIGHT - TITLE_HEIGHT;
   },
   methods: {
     /**
@@ -113,8 +106,6 @@ export default {
      * @param  {Number} index 歌曲索引
      */
     selectSong(song, index) {
-      console.log(song.name);
-      console.log(index);
       this.selectPlay({
         list: this.songs,
         index: index
@@ -137,7 +128,7 @@ export default {
       let scale = 1;
 
       // 计算放大和模糊比例
-      const precent = Math.abs(newY / this.imageHeight);
+      const precent = Math.abs(newY / IMAGE_HEIGHT);
 
       // 下拉时，背景图放大
       if (newY < 0) {
@@ -152,13 +143,11 @@ export default {
 
       // 列表上滑到最大距离，露出歌手名，修改背景图高度和z-index
       if (newY > this.maxImageScroll) {
-        domUtil.setCss(bgImageDom, 'height', `${TITLE_HEIGTH}px`);
-        domUtil.setCss(bgImageDom, 'paddingTop', 0);
+        domUtil.setCss(bgImageDom, 'height', `${TITLE_HEIGHT}px`);
         domUtil.setCss(this.$refs.playBtn, 'display', 'none');
         zIndex = 10;
       } else {
-        domUtil.setCss(bgImageDom, 'height', 0);
-        domUtil.setCss(bgImageDom, 'paddingTop', '70%');
+        domUtil.setCss(bgImageDom, 'height', `${IMAGE_HEIGHT}px`);
         domUtil.setCss(this.$refs.playBtn, 'display', '');
       }
       domUtil.setCss(bgImageDom, 'zIndex', zIndex);
@@ -184,34 +173,34 @@ export default {
   right: 0;
   z-index: 100;
   background-color: @color-background;
-  .icon-back-wrapper {
+  .title-wrapper {
     position: absolute;
     top: 0;
-    left: 6px;
+    left: 0;
+    width: 100%;
     z-index: 50;
     .icon-back {
-      display: block;
+      display: inline-block;
       padding: 10px;
+      vertical-align: middle;
       font-size: @font-size-large-x;
       color: @color-theme;
     }
-  }
-  .title {
-    position: absolute;
-    top: 0;
-    left: 10%;
-    width: 80%;
-    line-height: 40px;
-    z-index: 50;
-    .no-wrap;
-    text-align: center;
-    font-size: @font-size-large;
-    color: @color-text;
+    .title {
+      display: inline-block;
+      width: 80%;
+      vertical-align: middle;
+      line-height: 40px;
+      .no-wrap;
+      text-align: center;
+      font-size: @font-size-large;
+      color: @color-text;
+    }
   }
   .background-image {
     position: relative;
     width: 100%;
-    padding-top: 70%;
+    height: 262px;
     // 定义Y轴起始位置
     transform-origin: top;
     background-size: cover;
@@ -259,7 +248,7 @@ export default {
   }
   .scroll-list {
     position: absolute;
-    top: 0;
+    top: 262px;
     left: 0;
     bottom: 0;
     right: 0;
