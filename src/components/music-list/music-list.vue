@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="music-list-wrapper">
     <div class="title-wrapper">
-      <i class="icon-back" @click="back"></i>
+      <div class="icon-back-wrapper">
+        <i class="icon-back" @click="back"></i>
+      </div>
       <h1 class="title" v-html="singerName"></h1>
     </div>
     <div class="background-image" :style="backgroundImage" ref="bgImage">
@@ -179,17 +181,20 @@ export default {
     left: 0;
     width: 100%;
     z-index: 50;
-    .icon-back {
-      display: inline-block;
-      padding: 10px;
-      vertical-align: middle;
-      font-size: @font-size-large-x;
-      color: @color-theme;
+    .icon-back-wrapper {
+      position: absolute;
+      left: 6px;
+      top: 0;
+      .icon-back {
+        display: block;
+        padding: 10px;
+        font-size: @font-size-large-x;
+        color: @color-theme;
+      }
     }
     .title {
-      display: inline-block;
-      width: 80%;
-      vertical-align: middle;
+      width: 70%;
+      margin: 0 auto;
       line-height: 40px;
       .no-wrap;
       text-align: center;
