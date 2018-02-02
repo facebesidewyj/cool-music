@@ -1,6 +1,6 @@
 <template lang="html">
 <div class="player-wrapper" v-if="playList.length > 0">
-  <transition name="normal">
+  <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
     <div class="full-screen-player" v-show="fullScreen">
       <div class="background">
         <img :src="currentSong.image" alt="背景图" width="100%" height="100%">
@@ -15,7 +15,7 @@
       </div>
       <!-- 中间布局 -->
       <div class="middle">
-        <div class="cd" :class="cdRotate">
+        <div class="cd" :class="cdRotate" ref="cd">
           <img :src="currentSong.image" alt="cd">
         </div>
         <div class="song-desc-wrapper">
@@ -60,13 +60,15 @@
       </div>
     </div>
   </transition>
-  <audio :src="currentSong.url" ref="audio"></audio>
+  <audio src="" ref="audio"></audio>
 </div>
 </template>
 
 <script type="text/ecmascript-6">
 // 引入vuex的语法糖
 import { mapGetters, mapMutations } from 'vuex';
+import animations from 'create-keyframe-animation';
+import { domUtil } from 'common/js/domUtil';
 
 export default {
   name: 'player',
@@ -106,6 +108,76 @@ export default {
   },
   methods: {
     /**
+     * 过渡动画开始进入时执行的操作
+     * @param  {Object} el   执行动画的Dom
+     * @param  {Function} done 回调函数执行下一阶段
+     */
+    enter(el, done) {
+      const { x, y, scale } = this._getPosAndScale();
+
+      // 设置动画效果
+      let animation = {
+        0: {
+          transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+        },
+        60: {
+          transform: 'translate3d(0, 0, 0) scale(1.1)'
+        },
+        100: {
+          transform: 'translate3d(0, 0, 0) scale(1)'
+        }
+      };
+
+      // 注册动画
+      animations.registerAnimation({
+        name: 'move',
+        animation,
+        presets: {
+          duration: 400,
+          easing: 'linear'
+        }
+      });
+
+      // 执行动画
+      animations.runAnimation(this.$refs.cd, 'move', done);
+    },
+
+    /**
+     * 过渡动画进入结束时执行的操作
+     */
+    afterEnter() {
+      // 取消动画
+      animations.unregisterAnimation('move');
+      domUtil.setCss(this.$refs.cd, 'transform', '');
+    },
+
+    /**
+     * 过渡动画开始离开时执行的操作
+     * @param  {Object} el   执行动画的Dom
+     * @param  {Function} done 回调函数执行下一阶段
+     */
+    leave(el, done) {
+      const cdDom = this.$refs.cd;
+
+      // 获取移动距离和缩放比例
+      const { x, y, scale } = this._getPosAndScale();
+      domUtil.setCss(cdDom, 'transition', 'all 0.4s');
+      domUtil.setCss(cdDom, 'transform', `translate3d(${x}px, ${y}px, 0) scale(${scale})`);
+
+      // 监听过渡结束
+      cdDom.addEventListener('transitionend', done);
+    },
+
+    /**
+     * 过渡动画离开结束时执行的操作
+     */
+    afterLeave() {
+      const cdDom = this.$refs.cd;
+      domUtil.setCss(cdDom, 'transition', '');
+      domUtil.setCss(cdDom, 'transform', '');
+    },
+
+    /**
      * 点击切换播放器显示状态
      */
     togglePlayer() {
@@ -120,8 +192,32 @@ export default {
     },
 
     /**
+     * 获取位置和缩放比例
+     * @return {Object} 带有位置和缩放比例的对象
+     */
+    _getPosAndScale() {
+      // 获得相应的页面边距
+      const paddingLeft = 40;
+      const paddingBottom = 30;
+      const paddingTop = 80;
+
+      // 获取大CD的宽度
+      const cdWidth = window.innerWidth * 0.8;
+      const miniCdWidth = 40;
+
+      // 计算X轴的移动距离（X轴为负）
+      const x = -(window.innerWidth / 2 - paddingLeft);
+
+      // 计算Y轴的移动距离
+      const y = window.innerHeight - paddingTop - paddingBottom - cdWidth / 2;
+
+      // 计算缩放比例
+      const scale = miniCdWidth / cdWidth;
+
+      return { x, y, scale };
+    },
+    /**
      * vuex提供的存数据的语法糖，映射mutations里的方法
-     * @type {String}
      */
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
@@ -129,22 +225,21 @@ export default {
     })
   },
   watch: {
-    currentSong(newSong) {
-      setTimeout(() => {
-        this.$refs.audio.play();
-      }, 5000);
-    },
-    playState(newState) {
-      let audio = this.$refs.audio;
-
-      setTimeout(() => {
-        if (newState) {
-          audio.play();
-        } else {
-          audio.pause();
-        }
-      }, 1000);
-    }
+    // currentSong(newSong) {
+    //   this.$nextTick(() => {
+    //     this.$refs.audio.play();
+    //   });
+    // },
+    // playState(newState) {
+    //   this.$nextTick(() => {
+    //     let audio = this.$refs.audio;
+    //     if (newState) {
+    //       audio.play();
+    //     } else {
+    //       audio.pause();
+    //     }
+    //   });
+    // }
   }
 };
 </script>
@@ -276,7 +371,8 @@ export default {
 .normal-enter-active,
 .normal-leave-active {
   transition: all 0.5s;
-  .top .bottom {
+  .top,
+  .bottom {
     transition: all 0.5s cubic-bezier(0.86, 0.18, 0.82, 1.32);
   }
 }
@@ -290,6 +386,7 @@ export default {
     transform: translate3d(0, 100px, 0);
   }
 }
+
 .mini-player {
   display: flex;
   align-items: center;
