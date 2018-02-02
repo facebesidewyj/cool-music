@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
 <div class="song-list">
   <ul>
     <li class="song-item" v-for="(song,index) in songs" :key="song.id" @click="selectSong(song, index)">

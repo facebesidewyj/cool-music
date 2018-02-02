@@ -3,7 +3,7 @@
   <listview :data="singers" @selectSinger="selectSinger"></listview>
   <router-view></router-view>
   <div class="loading-wrapper">
-    <loading v-if="!singers.length"></loading>
+    <loading v-show="!singers.length"></loading>
   </div>
 </div>
 </template>

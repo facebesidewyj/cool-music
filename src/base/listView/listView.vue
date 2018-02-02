@@ -18,10 +18,10 @@
       </li>
     </ul>
   </div>
-  <div class="word-tip" v-if="tipFlag">
+  <div class="word-tip" v-show="tipFlag">
     <span class="text">{{wordTip}}</span>
   </div>
-  <div class="fixed-title-wrapper" v-if="fixedTitle" ref="fixedTitle">
+  <div class="fixed-title-wrapper" v-show="fixedTitle" ref="fixedTitle">
     <h2 class="fixed-title">{{fixedTitle}}</h2>
   </div>
 </scroll>

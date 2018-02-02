@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
 <div class="player-wrapper" v-if="playList.length > 0">
   <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
     <div class="full-screen-player" v-show="fullScreen">
@@ -10,13 +10,13 @@
         <div class="icon-back-wrapper" @click="togglePlayer">
           <i class="icon-back"></i>
         </div>
-        <h1 class="song-name">{{currentSong.album}}</h1>
+        <h1 class="song-name" v-html="currentSong.album"></h1>
         <h2 class="singer-name" v-html="currentSong.singer"></h2>
       </div>
       <!-- 中间布局 -->
       <div class="middle">
-        <div class="cd" :class="cdRotate" ref="cd">
-          <img :src="currentSong.image" alt="cd">
+        <div class="cd" ref="cd">
+          <img :src="currentSong.image" :class="cdRotate" alt="cd">
         </div>
         <div class="song-desc-wrapper">
           <div class="song-desc">{{songDesc}}</div>
@@ -50,8 +50,8 @@
         <img :src="currentSong.image" alt="cd" :class="cdRotate">
       </div>
       <div class="mini-content-wrapper">
-        <h1 class="mini-song-name">{{currentSong.name}}</h1>
-        <p class="mini-singer-name">{{currentSong.singer}}</p>
+        <h1 class="mini-song-name" v-html="currentSong.name"></h1>
+        <p class="mini-singer-name" v-html="currentSong.singer"></p>
       </div>
       <div class="mini-operator-wrapper">
         <div class="mini-icon-wrapper" @click.stop="togglePlayState">
@@ -315,21 +315,21 @@ export default {
       width: 100%;
       text-align: center;
 
-      // cd旋转动画
-      &.play {
-        animation: rotate 20s linear infinite;
-      }
-
-      &.pause {
-        animation-play-state: paused;
-      }
-
       img {
         width: 80%;
         height: 80%;
         border-radius: 50%;
         box-sizing: border-box;
         border: 10px solid rgba(255, 255, 255, 0.1);
+
+        // cd旋转动画
+        &.play {
+          animation: rotate 20s linear infinite;
+        }
+
+        &.pause {
+          animation-play-state: paused;
+        }
       }
     }
     .song-desc-wrapper {

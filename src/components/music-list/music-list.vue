@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div class="music-list-wrapper">
     <div class="title-wrapper">
       <div class="icon-back-wrapper">
@@ -22,7 +22,7 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs" @selectSong="selectSong"></song-list>
       </div>
-      <div class="loading-wrapper" v-if="!songs.length">
+      <div class="loading-wrapper" v-show="!songs.length">
         <loading></loading>
       </div>
     </scroll>
