@@ -8,13 +8,13 @@ import { getVKey } from 'api/song';
 let urlMap = {};
 
 export default class Song {
-  constructor({id, mid, singer, name, album, duartion, image}) {
+  constructor({id, mid, singer, name, album, duration, image}) {
     this.id = id;
     this.mid = mid;
     this.singer = singer;
     this.name = name;
     this.album = album;
-    this.duartion = duartion;
+    this.duration = duration;
     this.image = image;
     this.filename = `C400${this.mid}.m4a`;
 
@@ -52,7 +52,7 @@ export function createSong(musicData) {
     singer: filterSinger(musicData.singer),
     name: musicData.songname,
     album: musicData.albumname,
-    duartion: musicData.interval,
+    duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`
   });
 }

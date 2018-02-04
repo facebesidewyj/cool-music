@@ -72,5 +72,23 @@ export const domUtil = {
     }
 
     el.style[name] = val;
+  },
+
+  /**
+   * 格式化时间戳
+   * @param  {Number} time 传入的时间戳
+   * @return {Number}      格式化好的时间戳
+   */
+  formatTime(time) {
+    time = Math.floor(time);
+
+    let min = Math.floor(time / 60);
+
+    let second = time % 60;
+    if (second.toString().length === 1) {
+      second = '0' + second;
+    }
+
+    return `${min}:${second}`;
   }
 };

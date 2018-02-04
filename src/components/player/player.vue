@@ -25,6 +25,13 @@
       </div>
       <!-- 底部布局 -->
       <div class="bottom">
+        <div class="progress-wrapper">
+          <span class="play-time">{{playTime}}</span>
+          <div class="progress-bar-wrapper">
+            <progressBar :precent="precent"></progressBar>
+          </div>
+          <span class="total-time">{{totalTime}}</span>
+        </div>
         <div class="operators-wrapper">
           <div class="icon-wrapper">
             <i class="icon-sequence"></i>
@@ -61,7 +68,7 @@
       </div>
     </div>
   </transition>
-  <audio :src="currentSong.url" ref="audio" @canplay="songPlay" @error="songError"></audio>
+  <audio :src="currentSong.url" ref="audio" @canplay="songPlay" @error="songError" @timeupdate="updateTime"></audio>
 </div>
 </template>
 
@@ -70,15 +77,38 @@
 import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
 import { domUtil } from 'common/js/domUtil';
+import ProgressBar from 'base/progress-bar/progress-bar';
 
 export default {
   name: 'player',
   data() {
     return {
-      songReady: false
+      songReady: false,
+      /**
+       * 歌曲播放进度
+       */
+      currentTime: 0
     };
   },
   computed: {
+    /**
+     * 歌曲进度所占百分比
+     */
+    precent() {
+      return this.currentTime / this.currentSong.duration;
+    },
+    /**
+     * 歌曲进度时间
+     */
+    playTime() {
+      return domUtil.formatTime(this.currentTime);
+    },
+    /**
+     * 歌曲总时间
+     */
+    totalTime() {
+      return domUtil.formatTime(this.currentSong.duration);
+    },
     disabledClass() {
       return this.songReady ? '' : 'disable';
     },
@@ -259,6 +289,14 @@ export default {
     },
 
     /**
+     * 歌曲进度监听
+     * @param  {Object} e 事件对象
+     */
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+
+    /**
      * 获取位置和缩放比例
      * @return {Object} 带有位置和缩放比例的对象
      */
@@ -309,6 +347,9 @@ export default {
         }
       });
     }
+  },
+  components: {
+    ProgressBar
   }
 };
 </script>
@@ -419,10 +460,42 @@ export default {
     position: absolute;
     bottom: 50px;
     width: 100%;
+
+    .progress-wrapper{
+      display: flex;
+      align-items: center;
+      width: 80%;
+      margin:0 auto;
+      padding: 10px 0;
+
+      .play-time{
+        flex: 0 0 30px;
+        width: 30px;
+        line-height: 30px;
+        text-align: left;
+        color: @color-text;
+        font-size: @font-size-small;
+      }
+
+      .progress-bar-wrapper{
+        flex: 1;
+      }
+
+      .total-time{
+        flex: 0 0 30px;
+        width: 30px;
+        line-height: 30px;
+        text-align: right;
+        color: @color-text;
+        font-size: @font-size-small;
+      }
+    }
+
     .operators-wrapper {
       display: flex;
       align-items: center;
       justify-content: space-around;
+
       .icon-wrapper {
         color: @color-theme;
         font-size: 30px;
