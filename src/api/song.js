@@ -4,6 +4,7 @@
 import { commonParams } from './config';
 import axios from 'axios';
 import { createSong } from 'common/js/song';
+import { getUid } from 'common/js/uid';
 
 /**
  * 用于获取歌手对应歌曲列表的接口
@@ -20,6 +21,30 @@ export function getSingerSongs(singerId) {
     num: 80,
     songstatus: 1,
     singermid: singerId
+  });
+
+  return axios.get(url, { params: data }).then(res => {
+    return Promise.resolve(res.data);
+  });
+}
+
+/**
+ * 用于获取合法key的接口
+ * @return {Object} 返回Promise
+ */
+export function getVKey(songmid, filename) {
+  const url = '/api/getVKey';
+
+  const data = Object.assign({}, commonParams, {
+    cid: 205361747,
+    format: 'json',
+    platform: 'yqq',
+    hostUin: 0,
+    needNewCode: 0,
+    uin: 0,
+    songmid,
+    filename,
+    guid: getUid()
   });
 
   return axios.get(url, { params: data }).then(res => {

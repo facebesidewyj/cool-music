@@ -1,3 +1,4 @@
+<!-- 动画有问题，第一次不执行 -->
 <template>
 <div class="player-wrapper" v-if="playList.length > 0">
   <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
@@ -10,7 +11,7 @@
         <div class="icon-back-wrapper" @click="togglePlayer">
           <i class="icon-back"></i>
         </div>
-        <h1 class="song-name" v-html="currentSong.album"></h1>
+        <h1 class="song-name" v-html="currentSong.name"></h1>
         <h2 class="singer-name" v-html="currentSong.singer"></h2>
       </div>
       <!-- 中间布局 -->
@@ -28,13 +29,13 @@
           <div class="icon-wrapper">
             <i class="icon-sequence"></i>
           </div>
-          <div class="icon-wrapper">
+          <div class="icon-wrapper" @click="goPrevSong" :class="disabledClass" disable>
             <i class="icon-prev"></i>
           </div>
-          <div class="icon-wrapper" @click="togglePlayState">
-            <i :class="playIcon"></i>
+          <div class="icon-wrapper" @click="togglePlayState" :class="disabledClass">
+            <i :class="playIcon" ></i>
           </div>
-          <div class="icon-wrapper">
+          <div class="icon-wrapper" @click="goNextSong" :class="disabledClass">
             <i class="icon-next"></i>
           </div>
           <div class="icon-wrapper">
@@ -60,7 +61,7 @@
       </div>
     </div>
   </transition>
-  <audio src="" ref="audio"></audio>
+  <audio :src="currentSong.url" ref="audio" @canplay="songPlay" @error="songError"></audio>
 </div>
 </template>
 
@@ -73,9 +74,14 @@ import { domUtil } from 'common/js/domUtil';
 export default {
   name: 'player',
   data() {
-    return {};
+    return {
+      songReady: false
+    };
   },
   computed: {
+    disabledClass() {
+      return this.songReady ? '' : 'disable';
+    },
     /**
      * 控制cd旋转动画
      */
@@ -104,7 +110,7 @@ export default {
     miniPlayIcon() {
       return this.playState ? 'icon-pause-mini' : 'icon-play-mini';
     },
-    ...mapGetters(['playList', 'fullScreen', 'currentSong', 'playState'])
+    ...mapGetters(['playList', 'fullScreen', 'currentSong', 'playState', 'currentIndex'])
   },
   methods: {
     /**
@@ -188,7 +194,68 @@ export default {
      * 点击切换暂停或播放
      */
     togglePlayState() {
+      if (!this.songReady) {
+        return;
+      }
       this.setPlayState(!this.playState);
+    },
+
+    /**
+     * 歌曲后退
+     */
+    goPrevSong() {
+      if (this.songReady) {
+        let index = this.currentIndex - 1;
+
+        // 边界判断
+        if (index === -1) {
+          index = this.playList.length - 1;
+        }
+
+        this.setCurrentIndex(index);
+
+        if (!this.playState) {
+          this.togglePlayState();
+        }
+
+        this.songReady = false;
+      }
+    },
+
+    /**
+     * 歌曲前进
+     */
+    goNextSong() {
+      if (this.songReady) {
+        let index = this.currentIndex + 1;
+
+        // 边界判断
+        if (index === this.playList.length) {
+          index = 0;
+        }
+
+        this.setCurrentIndex(index);
+
+        if (!this.playState) {
+          this.togglePlayState();
+        }
+
+        this.songReady = false;
+      }
+    },
+
+    /**
+     * 歌曲能播放
+     */
+    songPlay() {
+      this.songReady = true;
+    },
+
+    /**
+     * 歌曲播放加载出错
+     */
+    songError() {
+      this.songReady = true;
     },
 
     /**
@@ -216,30 +283,32 @@ export default {
 
       return { x, y, scale };
     },
+
     /**
      * vuex提供的存数据的语法糖，映射mutations里的方法
      */
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayState: 'SET_PLAY_STATE'
+      setPlayState: 'SET_PLAY_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     })
   },
   watch: {
-    // currentSong(newSong) {
-    //   this.$nextTick(() => {
-    //     this.$refs.audio.play();
-    //   });
-    // },
-    // playState(newState) {
-    //   this.$nextTick(() => {
-    //     let audio = this.$refs.audio;
-    //     if (newState) {
-    //       audio.play();
-    //     } else {
-    //       audio.pause();
-    //     }
-    //   });
-    // }
+    currentSong(newSong) {
+      this.$nextTick(() => {
+        this.$refs.audio.play();
+      });
+    },
+    playState(newState) {
+      this.$nextTick(() => {
+        let audio = this.$refs.audio;
+        if (newState) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      });
+    }
   }
 };
 </script>
@@ -358,32 +427,35 @@ export default {
         color: @color-theme;
         font-size: 30px;
         padding: 10px;
+
+        &.disable {
+          color: @color-theme-d;
+        }
+
         .icon-play {
           font-size: 40px;
         }
+
         .icon-pause {
           font-size: 40px;
         }
       }
     }
   }
-}
-.normal-enter-active,
-.normal-leave-active {
-  transition: all 0.5s;
-  .top,
-  .bottom {
-    transition: all 0.5s cubic-bezier(0.86, 0.18, 0.82, 1.32);
+  &.normal-enter-active, &.normal-leave-active {
+    transition: all 0.4s linear;
+    .top, .bottom {
+      transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
+    }
   }
-}
-.normal-enter,
-.normal-leave-to {
-  opacity: 0;
-  .top {
-    transform: translate3d(0, -100px, 0);
-  }
-  .bottom {
-    transform: translate3d(0, 100px, 0);
+  &.normal-enter, &.normal-leave-to {
+    opacity: 0;
+    .top {
+      transform: translate3d(0, -100px, 0);
+    }
+    .bottom {
+      transform: translate3d(0, 100px, 0);
+    }
   }
 }
 
@@ -440,15 +512,14 @@ export default {
       font-size: 30px;
     }
   }
+  &.mini-enter-active, &.mini-leave-active {
+    transition: all 0.4s;
+  }
+  &.mini-leave-to, &.mini-enter {
+    opacity: 0;
+  }
 }
-.mini-enter-active,
-.mini-leave-active {
-  transition: all 0.5s;
-}
-.mini-leave-to,
-.mini-enter {
-  opacity: 0;
-}
+
 @keyframes rotate {
   0% {
     transform: rotate(0);
