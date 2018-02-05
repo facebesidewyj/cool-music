@@ -2,7 +2,7 @@
 <div class="progress-bar" ref="progressBar" @click="progressClick">
   <div class="bar-inner">
     <div class="progress" ref="progress"></div>
-    <div class="progress-btn-wrapper" ref="progressBtn" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
+    <div class="progress-btn-wrapper" ref="progressBtn" @touchstart.prevent="touchStart" @touchmove.prevent="touchMove" @touchend="touchEnd">
       <div class="progress-btn"></div>
     </div>
   </div>
