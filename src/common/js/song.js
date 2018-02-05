@@ -8,7 +8,7 @@ import { getVKey } from 'api/song';
 let urlMap = {};
 
 export default class Song {
-  constructor({id, mid, singer, name, album, duration, image}) {
+  constructor({ id, mid, singer, name, album, duration, image }) {
     this.id = id;
     this.mid = mid;
     this.singer = singer;
@@ -30,7 +30,7 @@ export default class Song {
     if (this.url) {
       return;
     }
-    getVKey(this.mid, this.filename).then((res) => {
+    getVKey(this.mid, this.filename).then(res => {
       if (res.code === ERR_OK) {
         const vkey = res.data.items[0].vkey;
         this.url = `http://dl.stream.qqmusic.qq.com/${this.filename}?vkey=${vkey}&guid=${getUid()}&uin=0&fromtag=66`;

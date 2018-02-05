@@ -28,7 +28,7 @@
         <div class="progress-wrapper">
           <span class="play-time">{{playTime}}</span>
           <div class="progress-bar-wrapper">
-            <progressBar :precent="precent"></progressBar>
+            <progressBar :precent="precent" @changePrecent="changePrecent"></progressBar>
           </div>
           <span class="total-time">{{totalTime}}</span>
         </div>
@@ -97,12 +97,14 @@ export default {
     precent() {
       return this.currentTime / this.currentSong.duration;
     },
+
     /**
      * 歌曲进度时间
      */
     playTime() {
       return domUtil.formatTime(this.currentTime);
     },
+
     /**
      * 歌曲总时间
      */
@@ -112,6 +114,7 @@ export default {
     disabledClass() {
       return this.songReady ? '' : 'disable';
     },
+
     /**
      * 控制cd旋转动画
      */
@@ -119,6 +122,9 @@ export default {
       return this.playState ? 'play' : 'play pause';
     },
 
+    /**
+     * 歌曲描述
+     */
     songDesc() {
       return this.currentSong.album + '-' + this.currentSong.singer;
     },
@@ -297,6 +303,14 @@ export default {
     },
 
     /**
+     * 改变歌曲进度
+     * @param  {Number} precent 进度百分比
+     */
+    changePrecent(precent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * precent;
+    },
+
+    /**
      * 获取位置和缩放比例
      * @return {Object} 带有位置和缩放比例的对象
      */
@@ -461,14 +475,14 @@ export default {
     bottom: 50px;
     width: 100%;
 
-    .progress-wrapper{
+    .progress-wrapper {
       display: flex;
       align-items: center;
       width: 80%;
-      margin:0 auto;
+      margin: 0 auto;
       padding: 10px 0;
 
-      .play-time{
+      .play-time {
         flex: 0 0 30px;
         width: 30px;
         line-height: 30px;
@@ -477,11 +491,11 @@ export default {
         font-size: @font-size-small;
       }
 
-      .progress-bar-wrapper{
+      .progress-bar-wrapper {
         flex: 1;
       }
 
-      .total-time{
+      .total-time {
         flex: 0 0 30px;
         width: 30px;
         line-height: 30px;
@@ -515,13 +529,16 @@ export default {
       }
     }
   }
-  &.normal-enter-active, &.normal-leave-active {
+  &.normal-enter-active,
+  &.normal-leave-active {
     transition: all 0.4s linear;
-    .top, .bottom {
+    .top,
+    .bottom {
       transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
     }
   }
-  &.normal-enter, &.normal-leave-to {
+  &.normal-enter,
+  &.normal-leave-to {
     opacity: 0;
     .top {
       transform: translate3d(0, -100px, 0);
@@ -585,10 +602,12 @@ export default {
       font-size: 30px;
     }
   }
-  &.mini-enter-active, &.mini-leave-active {
+  &.mini-enter-active,
+  &.mini-leave-active {
     transition: all 0.4s;
   }
-  &.mini-leave-to, &.mini-enter {
+  &.mini-leave-to,
+  &.mini-enter {
     opacity: 0;
   }
 }
