@@ -61,10 +61,13 @@
         <h1 class="mini-song-name" v-html="currentSong.name"></h1>
         <p class="mini-singer-name" v-html="currentSong.singer"></p>
       </div>
+      <div class="mini-operator-wrapper" @click.stop="togglePlayState">
+        <progressCircle :precent="precent" :radius="radius">
+          <i :class="miniPlayIcon" class="icon-mini-play"></i>
+        </progressCircle>
+      </div>
       <div class="mini-operator-wrapper">
-        <div class="mini-icon-wrapper" @click.stop="togglePlayState">
-          <i :class="miniPlayIcon"></i>
-        </div>
+        <i class="icon-playlist"></i>
       </div>
     </div>
   </transition>
@@ -78,6 +81,7 @@ import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
 import { domUtil } from 'common/js/domUtil';
 import ProgressBar from 'base/progress-bar/progress-bar';
+import ProgressCircle from 'base/progress-circle/progress-circle';
 
 export default {
   name: 'player',
@@ -87,7 +91,11 @@ export default {
       /**
        * 歌曲播放进度
        */
-      currentTime: 0
+      currentTime: 0,
+      /**
+       * 迷你播放器圆形进度条半径
+       */
+      radius: 32
     };
   },
   computed: {
@@ -363,7 +371,8 @@ export default {
     }
   },
   components: {
-    ProgressBar
+    ProgressBar,
+    ProgressCircle
   }
 };
 </script>
@@ -590,16 +599,24 @@ export default {
       color: @color-text-l;
     }
   }
+
   .mini-operator-wrapper {
     flex: 0 0 30px;
     width: 30px;
     padding: 0 10px;
-    color: @color-sub-theme;
-    .icon-play-mini {
-      font-size: 30px;
+
+    .icon-play-mini,
+    .icon-pause-mini,
+    .icon-playlist {
+      font-size: 32px;
+      color: @color-theme-d;
     }
-    .icon-pause-mini {
-      font-size: 30px;
+
+    // 绝对定位使其脱档
+    .icon-mini-play {
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
   &.mini-enter-active,
