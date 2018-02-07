@@ -4,6 +4,7 @@
   <a href="https://travis-ci.org/facebesidewyj/cool-music"><img src="https://travis-ci.org/facebesidewyj/cool-music.svg?branch=master" alt="Build Status"></a>
   <img src="https://img.shields.io/node/v/passport.svg?style=plastic" alt="node">
   <img src="https://img.shields.io/npm/v/npm.svg" alt="npm">
+  <a href="https://doc.webpack-china.org/"><img src="https://img.shields.io/badge/webpack-3.6.0-brightgreen.svg" alt="Webpack"></a>
   <a href="https://github.com/vuejs/vue"><img src="https://img.shields.io/badge/vue-v2.5.2-blue.svg" alt="Vue"></a>
   <a href="https://vuex.vuejs.org/zh-cn/intro.html"><img src="https://img.shields.io/badge/vuex-3.0.1-lightgrey.svg" alt="Vuex"></a>
   <img src="https://img.shields.io/badge/axios-0.17.1-yellow.svg" alt="axios">
