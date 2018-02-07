@@ -1,6 +1,6 @@
 # vue-music
 
-[![npm](https://img.shields.io/npm/v/npm.svg?style=plastic)]()[![node](https://img.shields.io/node/v/passport.svg?style=plastic)]()
+[![npm](https://img.shields.io/npm/v/npm.svg?style=plastic)]() [![node](https://img.shields.io/node/v/passport.svg?style=plastic)]() [![Build Status](https://travis-ci.org/facebesidewyj/cool-music.svg?branch=master)](https://travis-ci.org/facebesidewyj/cool-music)
 
 > 基于Vue开发的音乐App
 
