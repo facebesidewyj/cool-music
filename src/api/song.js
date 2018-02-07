@@ -53,6 +53,30 @@ export function getVKey(songmid, filename) {
 }
 
 /**
+ * 用于获取歌词的接口
+ * @return {Object} 返回Promise
+ */
+export function getLyric(mid) {
+  const url = '/api/getLyric';
+
+  const data = Object.assign({}, commonParams, {
+    songmid: mid,
+    platform: 'yqq',
+    hostUin: 0,
+    needNewCode: 0,
+    categoryId: 10000000,
+    pcachetime: +new Date(),
+    format: 'json'
+  });
+
+  return axios.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data);
+  });
+}
+
+/**
  * 将歌曲列表处理成我们需要的数据
  * @param  {Array} songs 传入的歌曲列表
  * @return {Array}       符合要求的歌曲列表

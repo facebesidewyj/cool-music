@@ -16,12 +16,21 @@
       </div>
       <!-- 中间布局 -->
       <div class="middle">
-        <div class="cd" ref="cd">
-          <img :src="currentSong.image" :class="cdRotate" alt="cd">
-        </div>
-        <div class="song-desc-wrapper">
-          <div class="song-desc">{{songDesc}}</div>
-        </div>
+        <!-- <div class="middle-cd">
+          <div class="cd" ref="cd">
+            <img :src="currentSong.image" :class="cdRotate" alt="cd">
+          </div>
+          <div class="song-desc-wrapper">
+            <div class="song-desc">{{songDesc}}</div>
+          </div>
+        </div> -->
+        <scroll class="middle-lyric" :data="currentLyric && currentLyric.lines">
+          <div>
+            <div class="lyric-wrapper" v-if="currentLyric">
+              <p class="lyric" :class="{'current': currentLineNum === index}" v-for="(item,index) in currentLyric.lines" :key="index" ref="lyricLine">{{item.txt}}</p>
+            </div>
+          </div>
+        </scroll>
       </div>
       <!-- 底部布局 -->
       <div class="bottom">
@@ -83,7 +92,9 @@ import { domUtil } from 'common/js/domUtil';
 import { util } from 'common/js/util';
 import ProgressBar from 'base/progress-bar/progress-bar';
 import ProgressCircle from 'base/progress-circle/progress-circle';
+import Scroll from 'base/scroll/scroll';
 import { playMode } from 'common/js/config';
+import LyricParse from 'lyric-parser';
 
 export default {
   name: 'player',
@@ -97,7 +108,15 @@ export default {
       /**
        * 迷你播放器圆形进度条半径
        */
-      radius: 32
+      radius: 32,
+      /**
+       * 当前歌词对象
+       */
+      currentLyric: null,
+      /**
+       * 歌词当前行
+       */
+      currentLineNum: 0
     };
   },
   computed: {
@@ -383,6 +402,28 @@ export default {
     },
 
     /**
+     * 获取歌词
+     */
+    getLyric() {
+      this.currentSong.getLyric().then(data => {
+        this.currentLyric = new LyricParse(data, this.handleLyric);
+        if (this.playState) {
+          this.currentLyric.play();
+        }
+      });
+    },
+
+    handleLyric({ lineNum, txt }) {
+      if (this.$refs.lyricLine) {
+        this.currentLineNum = lineNum;
+
+        if (lineNum > 5) {
+        } else {
+        }
+      }
+    },
+
+    /**
      * 获取位置和缩放比例
      * @return {Object} 带有位置和缩放比例的对象
      */
@@ -424,6 +465,7 @@ export default {
       if (!oldSong || newSong.id !== oldSong.id) {
         this.$nextTick(() => {
           this.$refs.audio.play();
+          this.getLyric();
         });
       }
     },
@@ -440,7 +482,8 @@ export default {
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   }
 };
 </script>
@@ -512,37 +555,62 @@ export default {
     width: 100%;
     white-space: nowrap;
 
-    .cd {
-      width: 100%;
-      text-align: center;
+    .middle-cd {
+      .cd {
+        width: 100%;
+        text-align: center;
 
-      img {
-        width: 80%;
-        height: 80%;
-        border-radius: 50%;
-        box-sizing: border-box;
-        border: 10px solid rgba(255, 255, 255, 0.1);
+        img {
+          width: 80%;
+          height: 80%;
+          border-radius: 50%;
+          box-sizing: border-box;
+          border: 10px solid rgba(255, 255, 255, 0.1);
 
-        // cd旋转动画
-        &.play {
-          animation: rotate 20s linear infinite;
+          // cd旋转动画
+          &.play {
+            animation: rotate 20s linear infinite;
+          }
+
+          &.pause {
+            animation-play-state: paused;
+          }
         }
-
-        &.pause {
-          animation-play-state: paused;
+      }
+      .song-desc-wrapper {
+        width: 80%;
+        margin: 30px auto 0 auto;
+        text-align: center;
+        .no-wrap;
+        .song-desc {
+          height: 20px;
+          line-height: 20px;
+          font-size: @font-size-medium;
+          color: @color-text-l;
         }
       }
     }
-    .song-desc-wrapper {
-      width: 80%;
-      margin: 30px auto 0 auto;
-      text-align: center;
-      .no-wrap;
-      .song-desc {
-        height: 20px;
-        line-height: 20px;
-        font-size: @font-size-medium;
-        color: @color-text-l;
+
+    .middle-lyric {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      .lyric-wrapper {
+        width: 80%;
+        height: 100%;
+        margin: 0 auto;
+        text-align: center;
+
+        .lyric {
+          line-height: 32px;
+          font-size: @font-size-medium;
+          color: @color-text-l;
+
+          &.current {
+            color: @color-text;
+          }
+        }
       }
     }
   }
