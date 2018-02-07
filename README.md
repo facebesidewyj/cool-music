@@ -1,4 +1,14 @@
-# vue-music
+<h1 align="center">Cool Music</h1>
+
+<p align="center">
+  <img src="https://img.shields.io/circleci/project/vuejs/vue/dev.svg" alt="Build Status">
+  <img src="https://img.shields.io/codecov/c/github/vuejs/vue/dev.svg" alt="Coverage Status">
+  <img src="https://img.shields.io/npm/dm/vue.svg" alt="Downloads">
+  <img src="https://img.shields.io/npm/v/vue.svg" alt="Version">
+  <img src="https://img.shields.io/npm/l/vue.svg" alt="License">
+  <img src="https://img.shields.io/badge/chat-on%20discord-7289da.svg" alt="Chat">
+  <br>
+</p>
 
 > [![npm](https://img.shields.io/npm/v/npm.svg)]() > [![node](https://img.shields.io/node/v/passport.svg?style=plastic)]() > [![Build Status](https://travis-ci.org/facebesidewyj/cool-music.svg?branch=master)](https://travis-ci.org/facebesidewyj/cool-music)
 
