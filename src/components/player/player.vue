@@ -24,7 +24,7 @@
             <div class="song-desc">{{songDesc}}</div>
           </div>
         </div> -->
-        <scroll class="middle-lyric" :data="currentLyric && currentLyric.lines">
+        <scroll class="middle-lyric" :data="currentLyric && currentLyric.lines" ref="lyricScroll">
           <div>
             <div class="lyric-wrapper" v-if="currentLyric">
               <p class="lyric" :class="{'current': currentLineNum === index}" v-for="(item,index) in currentLyric.lines" :key="index" ref="lyricLine">{{item.txt}}</p>
@@ -34,10 +34,14 @@
       </div>
       <!-- 底部布局 -->
       <div class="bottom">
+        <div class="dot-wrapper">
+          <div class="dot" :class="{'active': currentDot === 'cd'}"></div>
+          <div class="dot" :class="{'active': currentDot === 'lyric'}"></div>
+        </div>
         <div class="progress-wrapper">
           <span class="play-time">{{playTime}}</span>
           <div class="progress-bar-wrapper">
-            <progressBar :precent="precent" @changePrecent="changePrecent"></progressBar>
+            <progressBar :precent="precent" @changePrecent="changePrecent" @changePrecentInTouchMove="changePrecentInTouchMove"></progressBar>
           </div>
           <span class="total-time">{{totalTime}}</span>
         </div>
@@ -116,7 +120,11 @@ export default {
       /**
        * 歌词当前行
        */
-      currentLineNum: 0
+      currentLineNum: 0,
+      /**
+       * 当前显示页面
+       */
+      currentDot: 'cd'
     };
   },
   computed: {
@@ -347,11 +355,19 @@ export default {
     },
 
     /**
-     * 改变歌曲进度
+     * 拖动或点击结束改变歌曲进度
      * @param  {Number} precent 进度百分比
      */
     changePrecent(precent) {
       this.$refs.audio.currentTime = this.currentSong.duration * precent;
+    },
+
+    /**
+     * 拖动滚动条的过程中只改变歌曲进度时间，但不改变歌曲进度
+     * @param  {Number} precent 进度百分比
+     */
+    changePrecentInTouchMove(precent) {
+      this.currentTime = this.currentSong.duration * precent;
     },
 
     /**
@@ -417,8 +433,12 @@ export default {
       if (this.$refs.lyricLine) {
         this.currentLineNum = lineNum;
 
+        // 高亮歌词保持在中间
         if (lineNum > 5) {
+          let el = this.$refs.lyricLine[lineNum - 5];
+          this.$refs.lyricScroll.scrollToElement(el, 1000);
         } else {
+          this.$refs.lyricScroll.scrollTo(0, 0, 1000);
         }
       }
     },
@@ -620,6 +640,25 @@ export default {
     bottom: 50px;
     width: 100%;
 
+    .dot-wrapper {
+      font-size: 0;
+      text-align: center;
+      .dot {
+        display: inline-block;
+        vertical-align: top;
+        width: 10px;
+        height: 10px;
+        margin: 0 4px;
+        border-radius: 50%;
+        background-color: @color-text-l;
+
+        &.active {
+          width: 20px;
+          border-radius: 5px;
+          background-color: @color-text-ll;
+        }
+      }
+    }
     .progress-wrapper {
       display: flex;
       align-items: center;

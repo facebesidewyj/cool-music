@@ -72,7 +72,7 @@ export default {
 
         // 设置进度条样式
         this._setWidth(totalWidth);
-        this.$emit('changePrecent', this._getPrecent());
+        this.$emit('changePrecentInTouchMove', this._getPrecent());
       }
     },
 
