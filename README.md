@@ -6,6 +6,7 @@
   <img src="https://img.shields.io/npm/v/npm.svg" alt="npm">
   <a href="https://github.com/vuejs/vue"><img src="https://img.shields.io/badge/vue-v2.5.2-blue.svg" alt="Vue"></a>
   <img src="https://img.shields.io/badge/axios-0.17.1-yellow.svg" alt="axios">
+  <img src="https://img.shields.io/badge/better--scroll-1.8.0-orange.svg" alt="axios">
 </p>
 
 > 基于 Vue 开发的音乐 App
