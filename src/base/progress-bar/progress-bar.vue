@@ -61,7 +61,7 @@ export default {
         let totalWidth = this.touch.progressWidth + distance;
 
         // 获取组件总长度
-        let progressBarWidth = this.$refs.progressBar.clientWidth;
+        let progressBarWidth = this.$refs.progressBar.clientWidth - progressBtnWidth;
 
         // 边界判断
         if (totalWidth < 0) {
@@ -69,8 +69,10 @@ export default {
         } else if (totalWidth > progressBarWidth) {
           totalWidth = progressBarWidth;
         }
+
         // 设置进度条样式
         this._setWidth(totalWidth);
+        this.$emit('changePrecent', this._getPrecent());
       }
     },
 
@@ -116,7 +118,8 @@ export default {
   },
   watch: {
     precent(newPrecent) {
-      if (newPrecent > 0 && !this.touch.init) {
+      // 当歌曲进度走完，切换下一首时，这是的precent是0
+      if (newPrecent >= 0 && newPrecent <= 1 && !this.touch.init) {
         // 可见宽度
         let viewWidth = this.$refs.progressBar.clientWidth - progressBtnWidth;
 

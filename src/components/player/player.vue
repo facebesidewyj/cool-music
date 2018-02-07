@@ -33,10 +33,10 @@
           <span class="total-time">{{totalTime}}</span>
         </div>
         <div class="operators-wrapper">
-          <div class="icon-wrapper">
-            <i class="icon-sequence"></i>
+          <div class="icon-wrapper" @click="togglePlayMode">
+            <i :class="playModeIcon"></i>
           </div>
-          <div class="icon-wrapper" @click="goPrevSong" :class="disabledClass" disable>
+          <div class="icon-wrapper" @click="goPrevSong" :class="disabledClass">
             <i class="icon-prev"></i>
           </div>
           <div class="icon-wrapper" @click="togglePlayState" :class="disabledClass">
@@ -71,7 +71,7 @@
       </div>
     </div>
   </transition>
-  <audio :src="currentSong.url" ref="audio" @canplay="songPlay" @error="songError" @timeupdate="updateTime"></audio>
+  <audio :src="currentSong.url" ref="audio" @canplay="songPlay" @error="songError" @timeupdate="updateTime" @ended='songEnd'></audio>
 </div>
 </template>
 
@@ -80,8 +80,10 @@
 import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
 import { domUtil } from 'common/js/domUtil';
+import { util } from 'common/js/util';
 import ProgressBar from 'base/progress-bar/progress-bar';
 import ProgressCircle from 'base/progress-circle/progress-circle';
+import { playMode } from 'common/js/config';
 
 export default {
   name: 'player',
@@ -110,14 +112,14 @@ export default {
      * 歌曲进度时间
      */
     playTime() {
-      return domUtil.formatTime(this.currentTime);
+      return util.formatTime(this.currentTime);
     },
 
     /**
      * 歌曲总时间
      */
     totalTime() {
-      return domUtil.formatTime(this.currentSong.duration);
+      return util.formatTime(this.currentSong.duration);
     },
     disabledClass() {
       return this.songReady ? '' : 'disable';
@@ -149,12 +151,27 @@ export default {
     },
 
     /**
+     * 播放模式按钮样式
+     */
+    playModeIcon() {
+      let classStr = '';
+      if (this.playMode === playMode.sequence) {
+        classStr = 'icon-sequence';
+      } else if (this.playMode === playMode.loop) {
+        classStr = 'icon-loop';
+      } else {
+        classStr = 'icon-random';
+      }
+      return classStr;
+    },
+
+    /**
      * 迷你播放器播放按钮展示
      */
     miniPlayIcon() {
       return this.playState ? 'icon-pause-mini' : 'icon-play-mini';
     },
-    ...mapGetters(['playList', 'fullScreen', 'currentSong', 'playState', 'currentIndex'])
+    ...mapGetters(['playList', 'fullScreen', 'currentSong', 'playState', 'currentIndex', 'playMode', 'sequenceList'])
   },
   methods: {
     /**
@@ -319,6 +336,53 @@ export default {
     },
 
     /**
+     * 点击切换播放模式
+     */
+    togglePlayMode() {
+      // 修改播放模式
+      let changeMode = (this.playMode + 1) % 3;
+
+      // 同步到vuex
+      this.setPlayMode(changeMode);
+
+      // 随机播放，打乱播放列表
+      if (changeMode === playMode.random) {
+        let playList = util.randomArray(this.sequenceList);
+
+        // 找出当前这首歌的索引
+        let currentIndex = playList.findIndex(item => {
+          return item.id === this.currentSong.id;
+        });
+
+        // 同步当前索引和播放列表
+        this.setPlayList(playList);
+        this.setCurrentIndex(currentIndex);
+      } else {
+        // 找出当前这首歌的索引
+        let currentIndex = this.sequenceList.findIndex(item => {
+          return item.id === this.currentSong.id;
+        });
+
+        // 同步当前索引和播放列表
+        this.setPlayList(this.sequenceList);
+        this.setCurrentIndex(currentIndex);
+      }
+    },
+
+    /**
+     * 监听歌曲播放完毕事件
+     */
+    songEnd() {
+      // 判断是不是单曲循环
+      if (this.playMode === playMode.loop) {
+        this.$refs.audio.currentTime = 0;
+        this.$refs.audio.play();
+      } else {
+        this.goNextSong();
+      }
+    },
+
+    /**
      * 获取位置和缩放比例
      * @return {Object} 带有位置和缩放比例的对象
      */
@@ -350,14 +414,18 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayState: 'SET_PLAY_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayList: 'SET_PLAY_LIST',
+      setPlayMode: 'SET_PLAY_MODE'
     })
   },
   watch: {
-    currentSong(newSong) {
-      this.$nextTick(() => {
-        this.$refs.audio.play();
-      });
+    currentSong(newSong, oldSong) {
+      if (!oldSong || newSong.id !== oldSong.id) {
+        this.$nextTick(() => {
+          this.$refs.audio.play();
+        });
+      }
     },
     playState(newState) {
       this.$nextTick(() => {
