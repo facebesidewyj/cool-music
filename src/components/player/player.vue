@@ -15,15 +15,15 @@
         <h2 class="singer-name" v-html="currentSong.singer"></h2>
       </div>
       <!-- 中间布局 -->
-      <div class="middle">
-        <!-- <div class="middle-cd">
+      <div class="middle" @touchstart.prevent="moveTouchStart" @touchmove.prevent="moveTouching" @touchend="moveTouchEnd">
+        <div class="middle-cd" ref="cdWrapper">
           <div class="cd" ref="cd">
             <img :src="currentSong.image" :class="cdRotate" alt="cd">
           </div>
           <div class="song-desc-wrapper">
             <div class="song-desc">{{songDesc}}</div>
           </div>
-        </div> -->
+        </div>
         <scroll class="middle-lyric" :data="currentLyric && currentLyric.lines" ref="lyricScroll">
           <div>
             <div class="lyric-wrapper" v-if="currentLyric">
@@ -124,7 +124,11 @@ export default {
       /**
        * 当前显示页面
        */
-      currentDot: 'cd'
+      currentDot: 'cd',
+      /**
+       * 定义保存滑动数据的对象
+       */
+      touch: {}
     };
   },
   computed: {
@@ -444,6 +448,97 @@ export default {
     },
 
     /**
+     * 监听页面滑动开始
+     * @param  {Object} e event对象
+     */
+    moveTouchStart(e) {
+      // 记录一些初始值
+      this.touch.init = true;
+      this.touch.startX = e.touches[0].pageX;
+      this.touch.startY = e.touches[0].pageY;
+    },
+
+    /**
+     * 监听页面滑动中
+     * @param  {Object} e event对象
+     */
+    moveTouching(e) {
+      if (this.touch.init) {
+        let fingerTouch = e.touches[0];
+
+        // 获取滑动的距离
+        let moveX = fingerTouch.pageX - this.touch.startX;
+        let moveY = fingerTouch.pageY - this.touch.startY;
+
+        // 由于歌词是上下滚动，所以X轴移动的距离要比Y轴移动的距离大才行
+        if (Math.abs(moveY) > Math.abs(moveX)) {
+          return;
+        }
+
+        // 记录歌词页面最左侧的位置
+        let leftBegin = 0;
+        let windowWidth = window.innerWidth;
+        if (this.currentDot === 'lyric') {
+          leftBegin = -windowWidth;
+        }
+
+        // 计算偏移宽度
+        let offsetWidth = leftBegin + moveX;
+        if (offsetWidth > 0) {
+          offsetWidth = 0;
+        } else if (offsetWidth < -windowWidth) {
+          offsetWidth = -windowWidth;
+        }
+
+        this.touch.precent = Math.abs(offsetWidth) / windowWidth;
+
+        // 设置动画
+        domUtil.setCss(this.$refs.lyricScroll.$el, 'transform', `translate3d(${offsetWidth}px, 0, 0)`);
+        domUtil.setCss(this.$refs.lyricScroll.$el, 'transitionDuration', 0);
+        domUtil.setCss(this.$refs.cdWrapper, 'opacity', 1 - this.touch.precent);
+        domUtil.setCss(this.$refs.cdWrapper, 'transitionDuration', 0);
+      }
+    },
+
+    /**
+     * 页面滑动结束
+     */
+    moveTouchEnd() {
+      let precent = this.touch.precent;
+      let offsetWidth;
+      let windowWidth = window.innerWidth;
+      let opacity;
+
+      // 当前页是cd页面，计算偏移距离和透明度
+      if (this.currentDot === 'cd') {
+        if (precent > 0.1) {
+          offsetWidth = -windowWidth;
+          this.currentDot = 'lyric';
+          opacity = 0;
+        } else {
+          offsetWidth = 0;
+          opacity = 1;
+        }
+      } else {
+        // 当前页是歌词页面，计算偏移距离和透明度
+        if (precent < 0.9) {
+          offsetWidth = 0;
+          this.currentDot = 'cd';
+          opacity = 1;
+        } else {
+          offsetWidth = -windowWidth;
+          opacity = 0;
+        }
+      }
+
+      // 设置动画
+      domUtil.setCss(this.$refs.lyricScroll.$el, 'transform', `translate3d(${offsetWidth}px, 0, 0)`);
+      domUtil.setCss(this.$refs.lyricScroll.$el, 'transitionDuration', 400);
+      domUtil.setCss(this.$refs.cdWrapper, 'opacity', opacity);
+      domUtil.setCss(this.$refs.cdWrapper, 'transitionDuration', 400);
+    },
+
+    /**
      * 获取位置和缩放比例
      * @return {Object} 带有位置和缩放比例的对象
      */
@@ -576,6 +671,11 @@ export default {
     white-space: nowrap;
 
     .middle-cd {
+      display: inline-block;
+      vertical-align: middle;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       .cd {
         width: 100%;
         text-align: center;
@@ -612,6 +712,8 @@ export default {
     }
 
     .middle-lyric {
+      display: inline-block;
+      vertical-align: middle;
       width: 100%;
       height: 100%;
       overflow: hidden;
