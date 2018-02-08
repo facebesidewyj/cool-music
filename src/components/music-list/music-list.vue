@@ -33,14 +33,16 @@
 import SongList from 'base/song-list/song-list';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
-import { domUtil } from 'common/js/domUtil';
 import { mapActions } from 'vuex';
+import { domUtil } from 'common/js/domUtil';
+import { playListMixin } from 'common/js/mixin';
 
 const TITLE_HEIGHT = 40;
 const IMAGE_HEIGHT = 262;
 
 export default {
   name: 'music-list',
+  mixins: [playListMixin],
   props: {
     /**
      * 歌手名
@@ -87,6 +89,18 @@ export default {
     this.maxImageScroll = IMAGE_HEIGHT - TITLE_HEIGHT;
   },
   methods: {
+    /**
+     * 覆盖mixin中的方法
+     */
+    handlePlayList(playList) {
+      let bottom = '';
+      if (playList.length > 0) {
+        bottom = '60px';
+      }
+      domUtil.setCss(this.$refs.scrollList.$el, 'bottom', bottom);
+      this.$refs.scrollList.refresh();
+    },
+
     /**
      * 回退
      */

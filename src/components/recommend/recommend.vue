@@ -1,5 +1,5 @@
 <template>
-<div class="recommend-wrapper">
+<div class="recommend-wrapper" ref="recommendWrapper">
   <scroll ref="scroll" class="scroll-wrapper" :data="discList">
     <div>
       <div class="slider-wrapper" v-if="recommends.length">
@@ -39,9 +39,12 @@ import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import { getRecommend, getDiscList } from 'api/recommend';
 import { ERR_OK } from 'api/config';
+import { domUtil } from 'common/js/domUtil';
+import { playListMixin } from 'common/js/mixin';
 
 export default {
   name: 'recommend',
+  mixins: [playListMixin],
   props: [],
   data() {
     return {
@@ -55,6 +58,18 @@ export default {
     this._getDiscList();
   },
   methods: {
+    /**
+     * 覆盖mixin中的方法
+     */
+    handlePlayList(playList) {
+      let bottom = '';
+      if (playList.length > 0) {
+        bottom = '60px';
+      }
+      domUtil.setCss(this.$refs.recommendWrapper, 'bottom', bottom);
+      this.$refs.scroll.refresh();
+    },
+
     /**
      * 获取推荐列表数据
      */
