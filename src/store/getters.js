@@ -21,5 +21,6 @@ export const currentIndex = state => state.currentIndex;
  * @return {Object}       当前播放的歌曲
  */
 export const currentSong = state => {
-  return state.playList[state.currentIndex];
+  // 没有初始化成功时应该赋予空对象，否则v-bind就会报错，因为对象是undefined
+  return state.playList[state.currentIndex] || {};
 };

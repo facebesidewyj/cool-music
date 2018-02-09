@@ -7,7 +7,6 @@ import { playMode } from 'common/js/config';
 
 export function selectPlay({ commit, state }, { list, index }) {
   commit(types.SET_SEQUENCE_LIST, list);
-  commit(types.SET_FULL_SCREEN, true);
 
   // 随机播放，打乱播放列表，并寻找索引
   if (state.playMode === playMode.random) {
@@ -21,6 +20,7 @@ export function selectPlay({ commit, state }, { list, index }) {
   }
 
   commit(types.SET_PLAY_STATE, true);
+  commit(types.SET_FULL_SCREEN, true);
   commit(types.SET_CURRENT_INDEX, index);
 }
 

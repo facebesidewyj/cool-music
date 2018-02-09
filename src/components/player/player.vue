@@ -1,6 +1,6 @@
 <!-- 动画有问题，第一次不执行 -->
 <template>
-<div class="player-wrapper" v-if="playList.length > 0">
+<div class="player-wrapper" v-show="playList.length > 0">
   <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
     <div class="full-screen-player" v-show="fullScreen">
       <div class="background">
