@@ -332,6 +332,8 @@ export default {
         if (this.playList.length === 1) {
           this.$refs.audio.currentTime = 0;
           this.$refs.audio.play();
+
+          // 控制歌词显示行数
           if (this.currentLyric) {
             this.currentLyric.seek(0);
           }
@@ -380,6 +382,8 @@ export default {
     changePrecent(precent) {
       let currentTime = this.currentSong.duration * precent;
       this.$refs.audio.currentTime = currentTime;
+
+      // 歌词跟播放进度同步
       if (this.currentLyric) {
         this.currentLyric.seek(currentTime * 1000);
       }
@@ -462,6 +466,11 @@ export default {
         });
     },
 
+    /**
+     * 歌词对象创建时的回调函数
+     * @param  {Number} lineNum 当前歌词行数
+     * @param  {String} txt     当前歌词
+     */
     handleLyric({ lineNum, txt }) {
       if (this.$refs.lyricLine) {
         this.currentLineNum = lineNum;
@@ -541,7 +550,7 @@ export default {
 
       // 当前页是cd页面，计算偏移距离和透明度
       if (this.currentDot === 'cd') {
-        if (precent > 0.1) {
+        if (precent > 0.2) {
           offsetWidth = -windowWidth;
           this.currentDot = 'lyric';
           opacity = 0;
@@ -551,7 +560,7 @@ export default {
         }
       } else {
         // 当前页是歌词页面，计算偏移距离和透明度
-        if (precent < 0.9) {
+        if (precent < 0.8) {
           offsetWidth = 0;
           this.currentDot = 'cd';
           opacity = 1;
