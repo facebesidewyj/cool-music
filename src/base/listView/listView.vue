@@ -86,6 +86,13 @@ export default {
   },
   methods: {
     /**
+     * 实现父组件调用的刷新better-scroll的方法
+     */
+    refresh() {
+      this.$refs.scroll.refresh();
+    },
+
+    /**
      * 点击字母索引，滚动到指定分组
      */
     scrollToListGroup(event) {

@@ -20,8 +20,8 @@
           <div class="cd" ref="cd">
             <img :src="currentSong.image" :class="cdRotate" alt="cd">
           </div>
-          <div class="song-desc-wrapper">
-            <div class="song-desc">{{songDesc}}</div>
+          <div class="song-lyric-wrapper">
+            <div class="song-lyric">{{playingLyric}}</div>
           </div>
         </div>
         <scroll class="middle-lyric" :data="currentLyric && currentLyric.lines" ref="lyricScroll">
@@ -84,7 +84,7 @@
       </div>
     </div>
   </transition>
-  <audio :src="currentSong.url" ref="audio" @canplay="songPlay" @error="songError" @timeupdate="updateTime" @ended='songEnd'></audio>
+  <audio :src="currentSong.url" ref="audio" @playing="songPlay" @error="songError" @timeupdate="updateTime" @ended='songEnd'></audio>
 </div>
 </template>
 
@@ -104,6 +104,10 @@ export default {
   name: 'player',
   data() {
     return {
+      /**
+       * 正在播放的歌词
+       */
+      playingLyric: '',
       songReady: false,
       /**
        * 歌曲播放进度
@@ -161,13 +165,6 @@ export default {
      */
     cdRotate() {
       return this.playState ? 'play' : 'play pause';
-    },
-
-    /**
-     * 歌曲描述
-     */
-    songDesc() {
-      return this.currentSong.album + '-' + this.currentSong.singer;
     },
 
     /**
@@ -286,10 +283,12 @@ export default {
      * 点击切换暂停或播放
      */
     togglePlayState() {
-      if (!this.songReady) {
-        return;
+      if (this.songReady) {
+        this.setPlayState(!this.playState);
+        if (this.currentLyric) {
+          this.currentLyric.togglePlay();
+        }
       }
-      this.setPlayState(!this.playState);
     },
 
     /**
@@ -299,17 +298,25 @@ export default {
       if (this.songReady) {
         let index = this.currentIndex - 1;
 
-        // 边界判断
-        if (index === -1) {
-          index = this.playList.length - 1;
+        // 播放列表里只有一首歌，就执行单曲循环
+        if (this.playList.length === 1) {
+          this.$refs.audio.currentTime = 0;
+          this.$refs.audio.play();
+          if (this.currentLyric) {
+            this.currentLyric.seek(0);
+          }
+        } else {
+          // 边界判断
+          if (index === -1) {
+            index = this.playList.length - 1;
+          }
+
+          this.setCurrentIndex(index);
+
+          if (!this.playState) {
+            this.togglePlayState();
+          }
         }
-
-        this.setCurrentIndex(index);
-
-        if (!this.playState) {
-          this.togglePlayState();
-        }
-
         this.songReady = false;
       }
     },
@@ -321,17 +328,25 @@ export default {
       if (this.songReady) {
         let index = this.currentIndex + 1;
 
-        // 边界判断
-        if (index === this.playList.length) {
-          index = 0;
+        // 播放列表里只有一首歌，就执行单曲循环
+        if (this.playList.length === 1) {
+          this.$refs.audio.currentTime = 0;
+          this.$refs.audio.play();
+          if (this.currentLyric) {
+            this.currentLyric.seek(0);
+          }
+        } else {
+          // 边界判断
+          if (index === this.playList.length) {
+            index = 0;
+          }
+
+          this.setCurrentIndex(index);
+
+          if (!this.playState) {
+            this.togglePlayState();
+          }
         }
-
-        this.setCurrentIndex(index);
-
-        if (!this.playState) {
-          this.togglePlayState();
-        }
-
         this.songReady = false;
       }
     },
@@ -363,7 +378,11 @@ export default {
      * @param  {Number} precent 进度百分比
      */
     changePrecent(precent) {
-      this.$refs.audio.currentTime = this.currentSong.duration * precent;
+      let currentTime = this.currentSong.duration * precent;
+      this.$refs.audio.currentTime = currentTime;
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000);
+      }
     },
 
     /**
@@ -416,6 +435,9 @@ export default {
       if (this.playMode === playMode.loop) {
         this.$refs.audio.currentTime = 0;
         this.$refs.audio.play();
+        if (this.currentLyric) {
+          this.currentLyric.seek(0);
+        }
       } else {
         this.goNextSong();
       }
@@ -425,12 +447,19 @@ export default {
      * 获取歌词
      */
     getLyric() {
-      this.currentSong.getLyric().then(data => {
-        this.currentLyric = new LyricParse(data, this.handleLyric);
-        if (this.playState) {
-          this.currentLyric.play();
-        }
-      });
+      this.currentSong
+        .getLyric()
+        .then(data => {
+          this.currentLyric = new LyricParse(data, this.handleLyric);
+          if (this.playState) {
+            this.currentLyric.play();
+          }
+        })
+        .catch(() => {
+          this.currentLyric = null;
+          this.playingLyric = '';
+          this.currentLineNum = 0;
+        });
     },
 
     handleLyric({ lineNum, txt }) {
@@ -444,6 +473,7 @@ export default {
         } else {
           this.$refs.lyricScroll.scrollTo(0, 0, 1000);
         }
+        this.playingLyric = txt;
       }
     },
 
@@ -578,10 +608,15 @@ export default {
   watch: {
     currentSong(newSong, oldSong) {
       if (!oldSong || newSong.id !== oldSong.id) {
-        this.$nextTick(() => {
+        if (this.currentLyric) {
+          this.currentLyric.stop();
+        }
+
+        // 解决手机将应用切到后台的问题
+        setTimeout(() => {
           this.$refs.audio.play();
           this.getLyric();
-        });
+        }, 1000);
       }
     },
     playState(newState) {
@@ -697,12 +732,13 @@ export default {
           }
         }
       }
-      .song-desc-wrapper {
+      .song-lyric-wrapper {
         width: 80%;
         margin: 30px auto 0 auto;
         text-align: center;
         .no-wrap;
-        .song-desc {
+
+        .song-lyric {
           height: 20px;
           line-height: 20px;
           font-size: @font-size-medium;
