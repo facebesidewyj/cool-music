@@ -116,6 +116,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           params: req.query
         }).then((response) => {
           let ret = response.data;
+          console.log(response);
           if (typeof ret === 'string') {
             const reg = /^\w+\(({.+})\)$/;
             const matches = ret.match(reg);
@@ -132,6 +133,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       // 获取歌单详情
       app.get('/api/getDiscDetail', function(req, res) {
         const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg';
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          let ret = response.data;
+          if (typeof ret === 'string') {
+            const reg = /^\w+\(({.+})\)$/;
+            const matches = ret.match(reg);
+            if (matches) {
+              ret = JSON.parse(matches[1]);
+            }
+          }
+          res.json(ret);
+        }).catch((e) => {
+          console.log(e);
+        });
+      });
+
+      // 获取榜单列表
+      app.get('/api/getRankList', function(req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg';
         axios.get(url, {
           headers: {
             referer: 'https://c.y.qq.com/',
