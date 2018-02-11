@@ -1,8 +1,8 @@
 /**
  * 获取推荐页数据
  */
-// import jsonp from 'common/js/jsonp';
 import { commonParams } from './config';
+import { createSong, isVaildSong } from 'common/js/song';
 import axios from 'axios';
 
 export function getRecommend() {
@@ -43,4 +43,41 @@ export function getDiscList() {
   return axios.get(url, { params: data }).then(res => {
     return Promise.resolve(res.data);
   });
+}
+
+/**
+ * 获取歌单详情
+ */
+export function getDiscDetail(id) {
+  const url = '/api/getDiscDetail';
+
+  const data = Object.assign({}, commonParams, {
+    disstid: id,
+    type: 1,
+    json: 1,
+    utf8: 1,
+    onlysong: 0,
+    platform: 'yqq',
+    hostUin: 0,
+    needNewCode: 0
+  });
+
+  return axios.get(url, { params: data }).then(res => {
+    return Promise.resolve(res.data);
+  });
+}
+
+/**
+ * 将歌曲列表处理成我们需要的数据
+ * @param  {Array} songs 传入的歌曲列表
+ * @return {Array}       符合要求的歌曲列表
+ */
+export function formatDiscSongs(songs) {
+  let res = [];
+  songs.forEach(song => {
+    if (isVaildSong(song)) {
+      res.push(createSong(song));
+    }
+  });
+  return res;
 }

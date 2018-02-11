@@ -14,7 +14,7 @@
       <div class="recommend-list">
         <h1 class="title">热门歌单推荐</h1>
         <ul>
-          <li class="recommend-list-item" v-for="item in discList" :key="item.id">
+          <li class="recommend-list-item" v-for="item in discList" :key="item.id" @click="selectDisc(item)">
             <div class="icon">
               <img width="60" height="60" v-lazy="item.imgurl" alt="歌单图片">
             </div>
@@ -30,6 +30,7 @@
       <loading></loading>
     </div>
   </scroll>
+  <router-view></router-view>
 </div>
 </template>
 
@@ -41,6 +42,7 @@ import { getRecommend, getDiscList } from 'api/recommend';
 import { ERR_OK } from 'api/config';
 import { domUtil } from 'common/js/domUtil';
 import { playListMixin } from 'common/js/mixin';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'recommend',
@@ -68,6 +70,17 @@ export default {
       }
       domUtil.setCss(this.$refs.recommendWrapper, 'bottom', bottom);
       this.$refs.scroll.refresh();
+    },
+
+    /**
+     * 点击歌单进入歌单详情
+     * @param  {Number} id 歌单id
+     */
+    selectDisc(disc) {
+      this.$router.push({
+        path: `/recommend/${disc.dissid}`
+      });
+      this.setDisc(disc);
     },
 
     /**
@@ -100,7 +113,15 @@ export default {
         this.$refs.scroll.refresh();
         this.checkImgload = true;
       }
-    }
+    },
+
+    /**
+     * vuex提供的存数据的语法糖，映射mutations里的方法
+     * @type {String}
+     */
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    })
   },
   components: {
     Slider,

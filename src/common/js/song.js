@@ -26,6 +26,11 @@ export default class Song {
       this._genUrl();
     }
   }
+
+  /**
+   * 获取歌词
+   * @return {Object} Promise
+   */
   getLyric() {
     if (this.lyric) {
       return Promise.resolve(this.lyric);
@@ -43,6 +48,9 @@ export default class Song {
     });
   }
 
+  /**
+   * 获取歌曲播放地址
+   */
   _genUrl() {
     if (this.url) {
       return;
@@ -62,15 +70,15 @@ export default class Song {
  * @param  {Object} musicData 传入的对象
  * @return {Song}             返回的Song实例
  */
-export function createSong(musicData) {
+export function createSong(song) {
   return new Song({
-    id: musicData.songid,
-    mid: musicData.songmid,
-    singer: filterSinger(musicData.singer),
-    name: musicData.songname,
-    album: musicData.albumname,
-    duration: musicData.interval,
-    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`
+    id: song.songid,
+    mid: song.songmid,
+    singer: filterSinger(song.singer),
+    name: song.songname,
+    album: song.albumname,
+    duration: song.interval,
+    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${song.albummid}.jpg?max_age=2592000`
   });
 }
 
@@ -89,4 +97,8 @@ export function filterSinger(singer) {
   } else {
     return '';
   }
+}
+
+export function isVaildSong(song) {
+  return song.songid && song.albummid && (!song.pay || song.pay.payalbumprice === 0);
 }

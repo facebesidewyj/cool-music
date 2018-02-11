@@ -3,7 +3,7 @@
  */
 import { commonParams } from './config';
 import axios from 'axios';
-import { createSong } from 'common/js/song';
+import { createSong, isVaildSong } from 'common/js/song';
 import { getUid } from 'common/js/uid';
 
 /**
@@ -69,11 +69,13 @@ export function getLyric(mid) {
     format: 'json'
   });
 
-  return axios.get(url, {
-    params: data
-  }).then(res => {
-    return Promise.resolve(res.data);
-  });
+  return axios
+    .get(url, {
+      params: data
+    })
+    .then(res => {
+      return Promise.resolve(res.data);
+    });
 }
 
 /**
@@ -84,10 +86,8 @@ export function getLyric(mid) {
 export function formatSongs(songs) {
   let res = [];
   songs.forEach(song => {
-    // 解构赋值
-    let { musicData } = song;
-    if (musicData.songid && musicData.albumid) {
-      res.push(createSong(musicData));
+    if (isVaildSong(song.musicData)) {
+      res.push(createSong(song.musicData));
     }
   });
   return res;

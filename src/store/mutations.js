@@ -4,6 +4,9 @@ const mutation = {
   [types.SET_SINGER](state, singer) {
     state.singer = singer;
   },
+  [types.SET_DISC](state, disc) {
+    state.disc = disc;
+  },
   [types.SET_PLAY_STATE](state, playState) {
     state.playState = playState;
   },
