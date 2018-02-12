@@ -1,10 +1,10 @@
 <template>
-  <div class="rank-wrapper">
-    <div class="rank-list">
+  <div class="rank-wrapper" ref="rankWrapper">
+    <scroll class="rank-list" :data="rankList" ref="scroll">
       <ul>
-        <li class="rank-item" v-for="(item,index) in rankList" :key="index">
+        <li class="rank-item" v-for="(item,index) in rankList" :key="index" @click="selectRank(item)">
           <div class="item-icon">
-            <img :src="item.picUrl" alt="榜单图片" width="100" height="100">
+            <img v-lazy="item.picUrl" alt="榜单图片" width="100" height="100">
           </div>
           <ul class="item-song-list">
             <li class="item-song" v-for="(song,index) in item.songList" :key="index">
@@ -14,20 +14,26 @@
           </ul>
         </li>
       </ul>
-    </div>
+    </scroll>
     <div class="loading-wrapper">
       <loading v-if="!rankList.length"></loading>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import Loading from 'base/loading/loading';
+import Scroll from 'base/scroll/scroll';
 import { getRankList } from 'api/rank';
 import { ERR_OK } from 'api/config';
+import { playListMixin } from 'common/js/mixin';
+import { domUtil } from 'common/js/domUtil';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'rank',
+  mixins: [playListMixin],
   props: {},
   data() {
     return {
@@ -39,6 +45,29 @@ export default {
   },
   methods: {
     /**
+     * 点击进入榜单详情
+     * @param  {Object} rank 榜单对象
+     */
+    selectRank(rank) {
+      this.$router.push({
+        path: `/rank/${rank.id}`
+      });
+      this.setRank(rank);
+    },
+
+    /**
+     * 覆盖mixin中的方法
+     */
+    handlePlayList(playList) {
+      let bottom = '';
+      if (playList.length > 0) {
+        bottom = '60px';
+      }
+      domUtil.setCss(this.$refs.rankWrapper, 'bottom', bottom);
+      this.$refs.scroll.refresh();
+    },
+
+    /**
      * 获取榜单列表的私有方法
      */
     _getRankList() {
@@ -47,10 +76,19 @@ export default {
           this.rankList = res.data.topList;
         }
       });
-    }
+    },
+
+    /**
+     * vuex提供的存数据的语法糖，映射mutations里的方法
+     * @type {String}
+     */
+    ...mapMutations({
+      setRank: 'SET_RANK'
+    })
   },
   components: {
-    Loading
+    Loading,
+    Scroll
   }
 };
 </script>

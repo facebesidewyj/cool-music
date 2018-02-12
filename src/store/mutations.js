@@ -7,6 +7,9 @@ const mutation = {
   [types.SET_DISC](state, disc) {
     state.disc = disc;
   },
+  [types.SET_RANK](state, rank) {
+    state.rank = rank;
+  },
   [types.SET_PLAY_STATE](state, playState) {
     state.playState = playState;
   },
