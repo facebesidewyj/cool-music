@@ -2,6 +2,7 @@
 <div class="song-list">
   <ul>
     <li class="song-item" v-for="(song,index) in songs" :key="song.id" @click="selectSong(song, index)">
+      <div class="song-index">{{index + 1}}</div>
       <div class="song-content">
         <h1 class="title">{{song.name}}</h1>
         <p class="desc">{{getSongDesc(song)}}</p>
@@ -51,6 +52,18 @@ export default {
   box-sizing: border-box;
   height: 64px;
   font-size: @font-size-medium;
+
+  .song-index {
+    flex: 0 0 25px;
+    width: 25px;
+    height: 100%;
+    margin-right: 30px;
+    line-height: 64px;
+    text-align: center;
+    color: @color-sub-theme;
+    font-size: @font-size-large;
+  }
+
   .song-content {
     flex: 1;
     overflow: hidden;

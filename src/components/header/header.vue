@@ -1,6 +1,6 @@
 <template>
 <div class="header">
-  <h1 class="title">Vue Music</h1>
+  <h1 class="title">Cool Music</h1>
 </div>
 </template>
 <script type="text/ecmascript-6">
