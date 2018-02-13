@@ -1,5 +1,5 @@
 /**
- * 获取推荐页数据
+ * 推荐页相关接口
  */
 import { commonParams } from './config';
 import { createSong, isVaildSong } from 'common/js/song';

@@ -1,5 +1,5 @@
 /**
- * 获取榜单数据
+ * 榜单页相关接口
  */
 import { commonParams } from './config';
 import { createSong, isVaildSong } from 'common/js/song';

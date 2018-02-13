@@ -201,6 +201,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         });
       });
+
+      // 获取搜索热词
+      app.get('/api/getHotWord', function(req, res) {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg';
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          let ret = response.data;
+          if (typeof ret === 'string') {
+            const reg = /^\w+\(({.+})\)$/;
+            const matches = ret.match(reg);
+            if (matches) {
+              ret = JSON.parse(matches[1]);
+            }
+          }
+          res.json(ret);
+        }).catch((e) => {
+          console.log(e);
+        });
+      });
     },
     clientLogLevel: 'warning',
     historyApiFallback: {

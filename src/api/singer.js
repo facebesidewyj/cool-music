@@ -1,5 +1,5 @@
 /**
- * 获取歌手列表数据并对数据进行处理
+ * 歌手页相关接口
  */
 import { commonParams } from './config';
 import axios from 'axios';

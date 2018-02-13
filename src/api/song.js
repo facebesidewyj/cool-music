@@ -1,5 +1,5 @@
 /**
- * 获取歌曲列表数据
+ * 歌曲相关接口
  */
 import { commonParams } from './config';
 import axios from 'axios';
