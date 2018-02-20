@@ -48,7 +48,13 @@ export default new Router({
     },
     {
       path: '/search',
-      component: Search
+      component: Search,
+      children: [
+        {
+          path: ':id', // :属性指可以传入属性来当做路径
+          component: SingerDetail
+        }
+      ]
     }
   ]
 });

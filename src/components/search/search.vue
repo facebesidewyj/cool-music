@@ -1,9 +1,9 @@
 <template>
 <div class="search-wrapper">
   <div class="search-input-wrapper">
-    <searchInput ref="searchInput"></searchInput>
+    <searchInput ref="searchInput" @searchWordChange="searchWordChange"></searchInput>
   </div>
-  <div class="hot-key-wrapper">
+  <div class="hot-key-wrapper" v-show="!searchWord">
     <h1 class="hot-key-tittle">热门搜索</h1>
     <ul>
       <li class="hot-key" v-for="(key,index) in hotKeys" :key="index" @click="addSearchWord(key.k)">
@@ -11,11 +11,16 @@
       </li>
     </ul>
   </div>
+  <div class="search-result" v-show="searchWord">
+    <suggest :searchWord="searchWord"></suggest>
+  </div>
+  <router-view></router-view>
 </div>
 </template>
 
 <script type="text/ecmascript-6">
 import SearchInput from 'base/search-input/search-input';
+import Suggest from 'components/suggest/suggest';
 import { getHotWord } from 'api/search';
 import { ERR_OK } from 'api/config';
 
@@ -24,7 +29,8 @@ export default {
   props: [],
   data() {
     return {
-      hotKeys: []
+      hotKeys: [],
+      searchWord: ''
     };
   },
   created() {
@@ -36,7 +42,15 @@ export default {
      * @param {String} word 检索词
      */
     addSearchWord(word) {
-      this.$refs.searchInput.setSearchWord(word);
+      this.$refs.searchInput.setSearchWord(word.trim());
+    },
+
+    /**
+     * 监听检索词变化
+     * @param  {String} newWord 检索词
+     */
+    searchWordChange(newWord) {
+      this.searchWord = newWord;
     },
 
     /**
@@ -51,7 +65,8 @@ export default {
     }
   },
   components: {
-    SearchInput
+    SearchInput,
+    Suggest
   }
 };
 </script>
@@ -84,6 +99,13 @@ export default {
       font-size: @font-size-medium;
       color: @color-text-l;
     }
+  }
+
+  .search-result {
+    position: fixed;
+    width: 100%;
+    top: 178px;
+    bottom: 0;
   }
 }
 </style>
