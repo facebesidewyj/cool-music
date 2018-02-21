@@ -89,6 +89,8 @@ export function insertNewSong({ commit, state }, song) {
     sequenceList.splice(currentSongInSequenceList + 1, 0, song);
   }
 
+  currentIndex++;
+
   commit(types.SET_PLAY_LIST, playList);
   commit(types.SET_SEQUENCE_LIST, sequenceList);
   commit(types.SET_CURRENT_INDEX, currentIndex);

@@ -199,7 +199,15 @@ export default {
     miniPlayIcon() {
       return this.playState ? 'icon-pause-mini' : 'icon-play-mini';
     },
-    ...mapGetters(['playList', 'fullScreen', 'currentSong', 'playState', 'currentIndex', 'playMode', 'sequenceList'])
+    ...mapGetters([
+      'playList',
+      'fullScreen',
+      'currentSong',
+      'playState',
+      'currentIndex',
+      'playMode',
+      'sequenceList'
+    ])
   },
   methods: {
     /**
@@ -257,7 +265,11 @@ export default {
       // 获取移动距离和缩放比例
       const { x, y, scale } = this._getPosAndScale();
       domUtil.setCss(cdDom, 'transition', 'all 0.4s');
-      domUtil.setCss(cdDom, 'transform', `translate3d(${x}px, ${y}px, 0) scale(${scale})`);
+      domUtil.setCss(
+        cdDom,
+        'transform',
+        `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+      );
 
       // 监听过渡结束
       cdDom.addEventListener('transitionend', done);
@@ -532,7 +544,11 @@ export default {
         this.touch.precent = Math.abs(offsetWidth) / windowWidth;
 
         // 设置动画
-        domUtil.setCss(this.$refs.lyricScroll.$el, 'transform', `translate3d(${offsetWidth}px, 0, 0)`);
+        domUtil.setCss(
+          this.$refs.lyricScroll.$el,
+          'transform',
+          `translate3d(${offsetWidth}px, 0, 0)`
+        );
         domUtil.setCss(this.$refs.lyricScroll.$el, 'transitionDuration', 0);
         domUtil.setCss(this.$refs.cdWrapper, 'opacity', 1 - this.touch.precent);
         domUtil.setCss(this.$refs.cdWrapper, 'transitionDuration', 0);
@@ -571,7 +587,11 @@ export default {
       }
 
       // 设置动画
-      domUtil.setCss(this.$refs.lyricScroll.$el, 'transform', `translate3d(${offsetWidth}px, 0, 0)`);
+      domUtil.setCss(
+        this.$refs.lyricScroll.$el,
+        'transform',
+        `translate3d(${offsetWidth}px, 0, 0)`
+      );
       domUtil.setCss(this.$refs.lyricScroll.$el, 'transitionDuration', 400);
       domUtil.setCss(this.$refs.cdWrapper, 'opacity', opacity);
       domUtil.setCss(this.$refs.cdWrapper, 'transitionDuration', 400);

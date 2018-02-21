@@ -60,7 +60,7 @@ export default {
         res => {
           if (res.code === ERR_OK) {
             this.results = this._formatResult(res.data);
-            this._changeHasMoreResult(res.data);
+            this._checkHasMoreResult(res.data);
           }
         }
       );
@@ -106,7 +106,7 @@ export default {
           if (res.code === ERR_OK) {
             let list = this._formatResult(res.data);
             this.results = this.results.concat(list);
-            this._changeHasMoreResult(res.data);
+            this._checkHasMoreResult(res.data);
           }
         }
       );
@@ -129,9 +129,7 @@ export default {
         });
         this.setSinger(singer);
       } else {
-        this.insertNewSong({
-          song: item
-        });
+        this.insertNewSong(item);
       }
     },
 
@@ -139,7 +137,7 @@ export default {
      * 检查是否还能加载到更多
      * @param  {Object} data 歌手或歌曲数据
      */
-    _changeHasMoreResult(data) {
+    _checkHasMoreResult(data) {
       const song = data.song;
       if (
         !song.list.length ||
@@ -180,7 +178,7 @@ export default {
     ...mapActions(['insertNewSong'])
   },
   watch: {
-    searchWord() {
+    searchWord(newVal) {
       this.search();
     },
     results(newResults) {

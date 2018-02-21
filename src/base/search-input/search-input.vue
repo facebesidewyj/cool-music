@@ -7,6 +7,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { util } from 'common/js/util.js';
+
 export default {
   name: 'search-input',
   props: {
@@ -21,9 +23,12 @@ export default {
     };
   },
   created() {
-    this.$watch('searchWord', newWord => {
-      this.$emit('searchWordChange', newWord);
-    });
+    this.$watch(
+      'searchWord',
+      util.debounce(newWord => {
+        this.$emit('searchWordChange', newWord);
+      }, 200)
+    );
   },
   methods: {
     /**

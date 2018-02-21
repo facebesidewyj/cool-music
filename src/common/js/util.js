@@ -36,5 +36,24 @@ export const util = {
       tempArr[randomNum] = temp;
     }
     return tempArr;
+  },
+
+  /**
+   * 节流函数
+   * @param  {Function} func  要执行节流的函数
+   * @param  {Number} delay   延迟时间
+   * @return {Function}       执行节流函数的函数
+   */
+  debounce(func, delay) {
+    let timer = null;
+
+    return function(...args) {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
   }
 };
