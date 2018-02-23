@@ -27,6 +27,7 @@
 8. 代码风格规范工具：ESLint。
 9. JavaScript 语法标准：ECMAScript 2015。
 10. 动画相关：create-keyframe-animation。
+11. 本地存储：Store.js
 
 ## 实现的功能
 
@@ -53,6 +54,8 @@ npm run build
 # 生产打包并查看报告
 npm run build --report
 ```
+
+## 项目预览
 
 ## 写在最后
 
