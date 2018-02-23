@@ -57,6 +57,8 @@ npm run build --report
 
 ## 项目预览
 
+<img src="" width="30%"/>
+
 ## 写在最后
 
 如果大家觉得还行，能否帮忙 Star 或者 Fork 下？
