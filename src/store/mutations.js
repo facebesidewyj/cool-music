@@ -27,6 +27,9 @@ const mutation = {
   },
   [types.SET_CURRENT_INDEX](state, currentIndex) {
     state.currentIndex = currentIndex;
+  },
+  [types.SET_SEARCH_HISTORY](state, searchHistory) {
+    state.searchHistory = searchHistory;
   }
 };
 

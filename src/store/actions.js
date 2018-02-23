@@ -4,6 +4,14 @@
 import * as types from './mutation-types';
 import { util } from 'common/js/util';
 import { playMode } from 'common/js/config';
+import { saveSearchHistory } from 'common/js/cache';
+
+/**
+ * 保存搜索历史
+ */
+export function saveHistory({ commit, state }, searchWord) {
+  commit(types.SET_SEARCH_HISTORY, saveSearchHistory(searchWord));
+}
 
 /**
  * 播放歌曲

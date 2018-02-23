@@ -12,13 +12,14 @@
     </ul>
   </div>
   <div class="search-result" v-show="searchWord">
-    <suggest :searchWord="searchWord"></suggest>
+    <suggest :searchWord="searchWord" @saveSearchHistory="saveSearchHistory"></suggest>
   </div>
   <router-view></router-view>
 </div>
 </template>
 
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex';
 import SearchInput from 'base/search-input/search-input';
 import Suggest from 'components/suggest/suggest';
 import { getHotWord } from 'api/search';
@@ -54,6 +55,13 @@ export default {
     },
 
     /**
+     * 保存搜索历史
+     */
+    saveSearchHistory() {
+      this.saveHistory(this.searchWord);
+    },
+
+    /**
      * 获取检索热词
      */
     _getHotWord() {
@@ -62,7 +70,8 @@ export default {
           this.hotKeys = res.data.hotkey.slice(0, 10);
         }
       });
-    }
+    },
+    ...mapActions(['saveHistory'])
   },
   components: {
     SearchInput,

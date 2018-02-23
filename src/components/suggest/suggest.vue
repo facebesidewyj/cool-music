@@ -56,14 +56,12 @@ export default {
       this.page = 1;
       this.$refs.scroll.scrollTo(0, 0);
       this.hasMoreResult = true;
-      searchWord(this.searchWord, this.page, this.showSinger, perpage).then(
-        res => {
-          if (res.code === ERR_OK) {
-            this.results = this._formatResult(res.data);
-            this._checkHasMoreResult(res.data);
-          }
+      searchWord(this.searchWord, this.page, this.showSinger, perpage).then(res => {
+        if (res.code === ERR_OK) {
+          this.results = this._formatResult(res.data);
+          this._checkHasMoreResult(res.data);
         }
-      );
+      });
     },
 
     /**
@@ -101,15 +99,13 @@ export default {
         return;
       }
       this.page++;
-      searchWord(this.searchWord, this.page, this.showSinger, perpage).then(
-        res => {
-          if (res.code === ERR_OK) {
-            let list = this._formatResult(res.data);
-            this.results = this.results.concat(list);
-            this._checkHasMoreResult(res.data);
-          }
+      searchWord(this.searchWord, this.page, this.showSinger, perpage).then(res => {
+        if (res.code === ERR_OK) {
+          let list = this._formatResult(res.data);
+          this.results = this.results.concat(list);
+          this._checkHasMoreResult(res.data);
         }
-      );
+      });
     },
 
     /**
@@ -131,6 +127,7 @@ export default {
       } else {
         this.insertNewSong(item);
       }
+      this.$emit('saveSearchHistory');
     },
 
     /**
@@ -139,10 +136,7 @@ export default {
      */
     _checkHasMoreResult(data) {
       const song = data.song;
-      if (
-        !song.list.length ||
-        song.curnum + song.curpage * perpage > song.totalnum
-      ) {
+      if (!song.list.length || song.curnum + song.curpage * perpage > song.totalnum) {
         this.hasMoreResult = false;
       } else {
         this.hasMoreResult = true;

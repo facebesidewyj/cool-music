@@ -22,7 +22,8 @@
     "vuex": "^3.0.1",
     "create-keyframe-animation": "^0.1.0",
     "js-base64": "^2.4.3",
-    "lyric-parser": "^1.0.1"
+    "lyric-parser": "^1.0.1",
+    "store": "^2.0.12"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -78,9 +79,5 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
 }

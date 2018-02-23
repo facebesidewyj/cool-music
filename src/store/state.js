@@ -2,6 +2,7 @@
  * 设置state为数据源
  */
 import { playMode } from 'common/js/config';
+import { getSearchHistory } from 'common/js/cache';
 
 const state = {
   singer: {},
@@ -12,7 +13,8 @@ const state = {
   playMode: playMode.sequence, // 播放模式
   currentIndex: -1, // 当前播放索引
   disc: {}, // 歌单
-  rank: {} // 榜单
+  rank: {}, // 榜单
+  searchHistory: getSearchHistory() // 搜索历史
 };
 
 export default state;

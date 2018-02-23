@@ -19,6 +19,8 @@ export const playMode = state => state.playMode;
 
 export const currentIndex = state => state.currentIndex;
 
+export const searchHistory = state => state.searchHistory;
+
 /**
  * 获取当前播放的歌曲
  * @param  {Object} state vuex里的数据对象
