@@ -57,7 +57,7 @@ npm run build --report
 
 ## 项目预览
 
-<img src="" width="30%"/>
+<img src="https://github.com/facebesidewyj/cool-music/blob/master/gif/GIF.gif" width="30%"/>
 
 ## 写在最后
 
