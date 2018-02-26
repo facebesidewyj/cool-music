@@ -4,7 +4,7 @@
     <searchInput ref="searchInput" @searchWordChange="searchWordChange"></searchInput>
   </div>
   <div class="middle-content-wrapper" v-show="!searchWord" ref="middleWrapper">
-    <scroll :data="searchAllData" ref="scrollWrapper" class="middle-content">
+    <scroll :data="searchAllData" :click="true" ref="scrollWrapper" class="middle-content">
       <div>
         <div class="hot-key-wrapper">
           <h1 class="hot-key-tittle">热门搜索</h1>

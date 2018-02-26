@@ -1,6 +1,6 @@
 <template>
   <div class="rank-wrapper" ref="rankWrapper">
-    <scroll class="rank-list" :data="rankList" ref="scroll">
+    <scroll class="rank-list" :data="rankList" :click="true" ref="scroll">
       <ul>
         <li class="rank-item" v-for="(item,index) in rankList" :key="index" @click="selectRank(item)">
           <div class="item-icon">
