@@ -17,7 +17,7 @@
         <div class="search-history-wrapper" v-show="searchHistory.length > 0">
           <div class="title">
             <span class="title-text">搜索历史</span>
-            <span class="title-icon" @click="clearHistory">
+            <span class="title-icon" @click="showDialog">
               <i class="icon-clear"></i>
             </span>
           </div>
@@ -29,6 +29,7 @@
   <div class="search-result" v-show="searchWord" ref="searchResult">
     <suggest :searchWord="searchWord" @saveSearchHistory="saveSearchHistory" ref="suggest"></suggest>
   </div>
+  <vDialog :text="'您确定要清空搜索历史吗？'" ref="dialog" @selectSureBtn="clearHistory" :type="'confirm'"></vDialog>
   <router-view></router-view>
 </div>
 </template>
@@ -37,6 +38,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import SearchInput from 'base/search-input/search-input';
 import HistoryList from 'base/history-list/history-list';
+import VDialog from 'base/dialog/dialog';
 import Scroll from 'base/scroll/scroll';
 import Suggest from 'components/suggest/suggest';
 import { getHotWord } from 'api/search';
@@ -76,6 +78,13 @@ export default {
       domUtil.setCss(this.$refs.searchResult, 'bottom', bottom);
       this.$refs.scrollWrapper.refresh();
       this.$refs.suggest.scrollRefresh();
+    },
+
+    /**
+     * 显示提示框
+     */
+    showDialog() {
+      this.$refs.dialog.show();
     },
 
     /**
@@ -130,7 +139,8 @@ export default {
     SearchInput,
     Suggest,
     HistoryList,
-    Scroll
+    Scroll,
+    VDialog
   }
 };
 </script>
