@@ -4,13 +4,27 @@
 import * as types from './mutation-types';
 import { util } from 'common/js/util';
 import { playMode } from 'common/js/config';
-import { saveSearchHistory } from 'common/js/cache';
+import { saveSearchHistory, deleteSearchHistory, clearSearchHistory } from 'common/js/cache';
 
 /**
  * 保存搜索历史
  */
 export function saveHistory({ commit, state }, searchWord) {
   commit(types.SET_SEARCH_HISTORY, saveSearchHistory(searchWord));
+}
+
+/**
+ * 删除一条搜索历史
+ */
+export function deleteHistory({ commit, state }, searchWord) {
+  commit(types.SET_SEARCH_HISTORY, deleteSearchHistory(searchWord));
+}
+
+/**
+ * 清空搜索历史
+ */
+export function clearHistory({ commit, state }) {
+  commit(types.SET_SEARCH_HISTORY, clearSearchHistory());
 }
 
 /**
@@ -75,7 +89,8 @@ export function insertNewSong({ commit, state }, song) {
       playList.splice(currentIndex + 1, 0, song);
     }
   } else {
-    playList.splice(currentIndex + 1, 0, song);
+    currentIndex++;
+    playList.splice(currentIndex, 0, song);
   }
 
   // 获取原始歌曲列表中的当前索引和该歌曲索引
@@ -96,8 +111,6 @@ export function insertNewSong({ commit, state }, song) {
   } else {
     sequenceList.splice(currentSongInSequenceList + 1, 0, song);
   }
-
-  currentIndex++;
 
   commit(types.SET_PLAY_LIST, playList);
   commit(types.SET_SEQUENCE_LIST, sequenceList);

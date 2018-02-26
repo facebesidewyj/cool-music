@@ -37,6 +37,20 @@ function insertArray(arr, searchWord, compare, size) {
 }
 
 /**
+ * 封装一个队列，从数组中删除检索词
+ * @param  {Array} arr          搜索历史数组
+ * @param  {String} searchWord  检索词
+ * @param  {Function} compare   比较函数
+ */
+function deleteFromArray(arr, searchWord, compare) {
+  let index = arr.findIndex(compare);
+
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+}
+
+/**
  * 保存搜索词到本地存储
  * @param  {String} searchWord 检索词
  * @return {Array}            搜索历史数组
@@ -58,6 +72,29 @@ export function saveSearchHistory(searchWord) {
   // 存入本地存储
   Store.set(SEARCH_KEY, res);
   return res;
+}
+
+/**
+ * 从本地存储中删除检索词
+ * @param  {String} searchWord 检索词
+ * @return {Array}            搜索历史数组
+ */
+export function deleteSearchHistory(searchWord) {
+  let res = Store.get(SEARCH_KEY);
+  deleteFromArray(res, searchWord, item => {
+    return item === searchWord;
+  });
+  Store.set(SEARCH_KEY, res);
+  return res;
+}
+
+/**
+ * 清空本地存储
+ * @return {Array} 空数组
+ */
+export function clearSearchHistory() {
+  Store.clearAll();
+  return [];
 }
 
 /**

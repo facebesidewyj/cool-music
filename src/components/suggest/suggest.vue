@@ -51,6 +51,16 @@ export default {
     };
   },
   methods: {
+    /**
+     * 滚动列表刷新
+     */
+    scrollRefresh() {
+      this.$refs.scroll.refresh();
+    },
+
+    /**
+     * 获取检索数据
+     */
     search() {
       // 初始化一些操作
       this.page = 1;
