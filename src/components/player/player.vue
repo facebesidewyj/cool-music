@@ -738,8 +738,8 @@ export default {
         text-align: center;
 
         img {
-          width: 80%;
-          height: 80%;
+          width: 60%;
+          height: 60%;
           border-radius: 50%;
           box-sizing: border-box;
           border: 10px solid rgba(255, 255, 255, 0.1);
