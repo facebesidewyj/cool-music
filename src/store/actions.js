@@ -119,6 +119,53 @@ export function insertNewSong({ commit, state }, song) {
   commit(types.SET_FULL_SCREEN, true);
 }
 
+/**
+ * 清空播放列表
+ */
+export function clearPlayList({ commit, state }) {
+  commit(types.SET_PLAY_LIST, []);
+  commit(types.SET_SEQUENCE_LIST, []);
+  commit(types.SET_CURRENT_INDEX, -1);
+  commit(types.SET_PLAY_STATE, false);
+  commit(types.SET_FULL_SCREEN, false);
+}
+
+/**
+ * 将歌曲从播放列表中删除
+ */
+export function deleteSongFromPlayList({ commit, state }, song) {
+  let playList = state.playList.slice();
+  let sequenceList = state.sequenceList.slice();
+  let currentIndex = state.currentIndex;
+
+  let indexInPlay = findIndex(playList, song);
+
+  playList.splice(indexInPlay, 1);
+
+  let indexInSeq = findIndex(sequenceList, song);
+
+  sequenceList.splice(indexInSeq, 1);
+
+  // 判断索引位置
+  if (indexInPlay < currentIndex || currentIndex === playList.length) {
+    currentIndex--;
+  }
+
+  // 判断播放状态
+  let flag = playList.length > 0;
+
+  commit(types.SET_PLAY_LIST, playList);
+  commit(types.SET_SEQUENCE_LIST, sequenceList);
+  commit(types.SET_CURRENT_INDEX, currentIndex);
+  commit(types.SET_PLAY_STATE, flag);
+}
+
+/**
+ * 封装查询歌曲在列表中的位置
+ * @param  {Array} list  歌曲列表
+ * @param  {Object} song 歌曲对象
+ * @return {Number}      索引
+ */
 function findIndex(list, song) {
   return list.findIndex(item => {
     return item.id === song.id;

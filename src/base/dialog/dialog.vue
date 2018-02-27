@@ -1,6 +1,6 @@
 <template>
 <transition name="show">
-  <div class="dialog-wrapper" v-show="showFlag">
+  <div class="dialog-wrapper" v-show="showFlag" @click.stop>
     <div class="dialog">
       <p class="text">{{text}}</p>
       <div class="button-wrapper" v-show="type=== 'confirm'">
@@ -17,7 +17,7 @@
 
 <script type="text/ecmascript-6">
 export default {
-  name: 'dialog',
+  name: 'v-dialog',
   props: {
     /**
      * 显示文本

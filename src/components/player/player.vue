@@ -1,4 +1,3 @@
-<!-- 动画有问题，第一次不执行 -->
 <template>
 <div class="player-wrapper" v-show="playList.length > 0">
   <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
@@ -79,11 +78,12 @@
           <i :class="miniPlayIcon" class="icon-mini-play"></i>
         </progressCircle>
       </div>
-      <div class="mini-operator-wrapper">
+      <div class="mini-operator-wrapper" @click.stop="showPlayList">
         <i class="icon-playlist"></i>
       </div>
     </div>
   </transition>
+  <playList ref="playList"></playList>
   <audio :src="currentSong.url" ref="audio" @playing="songPlay" @error="songError" @timeupdate="updateTime" @ended='songEnd'></audio>
 </div>
 </template>
@@ -99,6 +99,7 @@ import ProgressCircle from 'base/progress-circle/progress-circle';
 import Scroll from 'base/scroll/scroll';
 import { playMode } from 'common/js/config';
 import LyricParse from 'lyric-parser';
+import PlayList from 'components/play-list/play-list';
 
 export default {
   name: 'player',
@@ -199,15 +200,7 @@ export default {
     miniPlayIcon() {
       return this.playState ? 'icon-pause-mini' : 'icon-play-mini';
     },
-    ...mapGetters([
-      'playList',
-      'fullScreen',
-      'currentSong',
-      'playState',
-      'currentIndex',
-      'playMode',
-      'sequenceList'
-    ])
+    ...mapGetters(['playList', 'fullScreen', 'currentSong', 'playState', 'currentIndex', 'playMode', 'sequenceList'])
   },
   methods: {
     /**
@@ -265,11 +258,7 @@ export default {
       // 获取移动距离和缩放比例
       const { x, y, scale } = this._getPosAndScale();
       domUtil.setCss(cdDom, 'transition', 'all 0.4s');
-      domUtil.setCss(
-        cdDom,
-        'transform',
-        `translate3d(${x}px, ${y}px, 0) scale(${scale})`
-      );
+      domUtil.setCss(cdDom, 'transform', `translate3d(${x}px, ${y}px, 0) scale(${scale})`);
 
       // 监听过渡结束
       cdDom.addEventListener('transitionend', done);
@@ -544,11 +533,7 @@ export default {
         this.touch.precent = Math.abs(offsetWidth) / windowWidth;
 
         // 设置动画
-        domUtil.setCss(
-          this.$refs.lyricScroll.$el,
-          'transform',
-          `translate3d(${offsetWidth}px, 0, 0)`
-        );
+        domUtil.setCss(this.$refs.lyricScroll.$el, 'transform', `translate3d(${offsetWidth}px, 0, 0)`);
         domUtil.setCss(this.$refs.lyricScroll.$el, 'transitionDuration', 0);
         domUtil.setCss(this.$refs.cdWrapper, 'opacity', 1 - this.touch.precent);
         domUtil.setCss(this.$refs.cdWrapper, 'transitionDuration', 0);
@@ -587,14 +572,17 @@ export default {
       }
 
       // 设置动画
-      domUtil.setCss(
-        this.$refs.lyricScroll.$el,
-        'transform',
-        `translate3d(${offsetWidth}px, 0, 0)`
-      );
+      domUtil.setCss(this.$refs.lyricScroll.$el, 'transform', `translate3d(${offsetWidth}px, 0, 0)`);
       domUtil.setCss(this.$refs.lyricScroll.$el, 'transitionDuration', 400);
       domUtil.setCss(this.$refs.cdWrapper, 'opacity', opacity);
       domUtil.setCss(this.$refs.cdWrapper, 'transitionDuration', 400);
+    },
+
+    /**
+     * 显示播放列表面板
+     */
+    showPlayList() {
+      this.$refs.playList.show();
     },
 
     /**
@@ -636,6 +624,10 @@ export default {
   },
   watch: {
     currentSong(newSong, oldSong) {
+      if (!newSong.id) {
+        return;
+      }
+
       if (!oldSong || newSong.id !== oldSong.id) {
         if (this.currentLyric) {
           this.currentLyric.stop();
@@ -662,7 +654,8 @@ export default {
   components: {
     ProgressBar,
     ProgressCircle,
-    Scroll
+    Scroll,
+    PlayList
   }
 };
 </script>
