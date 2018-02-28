@@ -26,6 +26,7 @@
       </div>
     </div>
     <vDialog :text="'您确定要清空播放列表吗？'" ref="dialog" @selectSureBtn="clearPlayList" :type="'confirm'"></vDialog>
+    <topTip :delay="1000" :type="0" :text="'删除成功'" ref="topTip"></topTip>
   </div>
 </transition>
 </template>
@@ -35,6 +36,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import Scroll from 'base/scroll/scroll';
 import { playMode } from 'common/js/config';
 import VDialog from 'base/dialog/dialog';
+import TopTip from 'base/top-tip/top-tip';
 
 export default {
   name: 'play-list',
@@ -69,6 +71,7 @@ export default {
      */
     deleteSong(song) {
       this.deleteSongFromPlayList(song);
+      this.$refs.topTip.show();
 
       if (!this.playList.length > 0) {
         this.hide();
@@ -147,7 +150,8 @@ export default {
   },
   components: {
     Scroll,
-    VDialog
+    VDialog,
+    TopTip
   }
 };
 </script>

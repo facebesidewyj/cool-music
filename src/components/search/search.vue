@@ -21,7 +21,7 @@
               <i class="icon-clear"></i>
             </span>
           </div>
-          <historyList :historyArray="searchHistory" @selectItem="selectHistoryItem" @deleteItem="deleteHistory"></historyList>
+          <historyList :historyArray="searchHistory" @selectItem="selectHistoryItem" @deleteItem="deletetHistoryItem"></historyList>
         </div>
       </div>
     </scroll>
@@ -30,6 +30,7 @@
     <suggest :searchWord="searchWord" @saveSearchHistory="saveSearchHistory" ref="suggest"></suggest>
   </div>
   <vDialog :text="'您确定要清空搜索历史吗？'" ref="dialog" @selectSureBtn="clearHistory" :type="'confirm'"></vDialog>
+  <topTip :delay="1000" :type="0" :text="'删除成功'" ref="topTip"></topTip>
   <router-view></router-view>
 </div>
 </template>
@@ -45,6 +46,7 @@ import { getHotWord } from 'api/search';
 import { ERR_OK } from 'api/config';
 import { domUtil } from 'common/js/domUtil';
 import { playListMixin } from 'common/js/mixin';
+import TopTip from 'base/top-tip/top-tip';
 
 export default {
   name: 'search',
@@ -96,6 +98,15 @@ export default {
     },
 
     /**
+     * 删除历史记录
+     * @param  {String} item l检索词
+     */
+    deletetHistoryItem(item) {
+      this.$refs.topTip.show();
+      this.deleteHistory(item);
+    },
+
+    /**
      * 点击热门搜索改变检索词
      * @param {String} word 检索词
      */
@@ -140,7 +151,8 @@ export default {
     Suggest,
     HistoryList,
     Scroll,
-    VDialog
+    VDialog,
+    TopTip
   }
 };
 </script>
