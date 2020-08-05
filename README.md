@@ -11,6 +11,8 @@
   <img src="https://img.shields.io/badge/better--scroll-1.8.0-orange.svg" alt="better-srcoll">
 </p>
 
+[![facebesidewyj's github stats](https://github-readme-stats.vercel.app/api?username=facebesidewyj)](https://github.com/anuraghazra/github-readme-stats)
+
 ## 项目简介
 
 入坑 Vue 以来，一直苦没有真正的实战项目来提升自己，所以在工作之余开发了一个基于 Vue2.0+版本的音乐 WebAPP。项目构建初期也在 github 上参考了众多案例，通过学习并阅读他人的成熟代码进而提升自己，历时一个半月完成了 Cool Music 这个项目。我希望把这个项目的源代码开放出来，来帮助更多的前端爱好者们，大家共同进步，共同提升。
@@ -64,7 +66,3 @@ npm run build --report
 如果大家觉得还行，能否帮忙 Star 下？
 
 :kissing_heart::kissing_heart::kissing_heart:
-
-
-[![Anurag's github stats](https://github-readme-stats.vercel.app/api?username=facebesidewyj)](https://github.com/anuraghazra/github-readme-stats)
-
